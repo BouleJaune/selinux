@@ -419,21 +419,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Correction du problème">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#restauration-des-bons-contextes" class="md-nav__link">
-    <span class="md-ellipsis">
-      Restauration des bons contextes
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
       </ul>
@@ -452,27 +437,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#introduction-a-selinux-diagnostic-des-blocages" class="md-nav__link">
-    <span class="md-ellipsis">
-      Introduction à SELinux &amp; Diagnostic des blocages
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#contexte" class="md-nav__link">
     <span class="md-ellipsis">
       Contexte
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#objectifs_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      Objectifs
     </span>
   </a>
   
@@ -771,21 +738,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Correction du problème">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#restauration-des-bons-contextes" class="md-nav__link">
-    <span class="md-ellipsis">
-      Restauration des bons contextes
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
       </ul>
@@ -804,27 +756,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#introduction-a-selinux-diagnostic-des-blocages" class="md-nav__link">
-    <span class="md-ellipsis">
-      Introduction à SELinux &amp; Diagnostic des blocages
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#contexte" class="md-nav__link">
     <span class="md-ellipsis">
       Contexte
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#objectifs_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      Objectifs
     </span>
   </a>
   
@@ -990,7 +924,6 @@ Passez ensuite en <code>permissive</code> pour la suite et bien voir que c'est S
 <h3 id="analyse-des-messages-avc">Analyse des messages AVC</h3>
 <h4 id="lecture-brute-des-logs">Lecture brute des logs</h4>
 <p>Retrouvez ces blocages dans les logs du système de différentes manières et identifiez la source, cible et action interdite.</p>
-<p>[TODO] ajout d'autres méthodes de logs</p>
 <details class="note">
 <summary>Commandes</summary>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a>ausearch<span class="w"> </span>-m<span class="w"> </span>AVC<span class="w"> </span>-ts<span class="w"> </span>recent
@@ -1004,15 +937,13 @@ Passez ensuite en <code>permissive</code> pour la suite et bien voir que c'est S
 </span></code></pre></div></td></tr></table></div>
 </details>
 <h3 id="correction-du-probleme">Correction du problème</h3>
-<h4 id="restauration-des-bons-contextes">Restauration des bons contextes</h4>
-<p>Relancez le binaire ensuite. Est-ce que ça fonctionne ? Vérifiez à nouveau les contextes (<code>ls -Z</code>).</p>
+<p>Restaurez le bon contexte pour débloquer le binaire.</p>
 <details class="note">
 <summary>Commandes</summary>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a>restorecon<span class="w"> </span>-Rv<span class="w"> </span>/srv/testselinux
 </span></code></pre></div></td></tr></table></div>
 </details>
 <h2 id="flask-partie-1">Flask — Partie 1</h2>
-<h3 id="introduction-a-selinux-diagnostic-des-blocages">Introduction à SELinux &amp; Diagnostic des blocages</h3>
 <hr />
 <h3 id="contexte">Contexte</h3>
 <p>Vous êtes développeur d'une application Python nommée <code>fileserve</code>, développée avec Flask. Elle permet :</p>
@@ -1023,17 +954,9 @@ Passez ensuite en <code>permissive</code> pour la suite et bien voir que c'est S
 </ul>
 <p>Elle n’est pas encore conteneurisée : vous l'exécuterez directement sur votre Fedora en tant que service utilisateur.</p>
 <hr />
-<h3 id="objectifs_1">Objectifs</h3>
-<ul>
-<li>Explorer le contexte SELinux de votre système</li>
-<li>Observer et comprendre les blocages liés à SELinux</li>
-<li>Diagnostiquer à l’aide des outils fournis</li>
-<li>Appliquer les premières manipulations correctives</li>
-</ul>
-<hr />
 <h3 id="prerequis-techniques">Prérequis techniques</h3>
 <ul>
-<li>L'application Python (fournie par l'instructeur ou codée simple)</li>
+<li>L'application Python (Disponible ici [TODO])</li>
 <li>
 <p>Répertoires :</p>
 </li>
@@ -1047,32 +970,30 @@ Passez ensuite en <code>permissive</code> pour la suite et bien voir que c'est S
 <h4 id="installation-de-lapplication">Installation de l'application</h4>
 <h4 id="decouverte-de-lappli">Découverte de l'appli</h4>
 <ul>
-<li>Identifier le <strong>mode actif de SELinux</strong> (<code>getenforce</code>, <code>sestatus</code>)</li>
-<li>Vérifier que SELinux est <strong>activé au boot</strong></li>
-<li>
-<p>Observer les <strong>contextes</strong> :</p>
-</li>
-<li>
-<p>de fichiers (<code>ls -Z /data/public</code>)</p>
-</li>
-<li>de processus (<code>ps -eZ | grep flask</code>)</li>
-<li>de ports (<code>semanage port -l | grep 8080</code>)</li>
-<li>de sockets (<code>ss -Ztulpen</code>)</li>
+<li>Vérifier le mode SELinux</li>
+<li>Observer les <strong>contextes</strong> :</li>
+<li>de fichiers </li>
+<li>de processus </li>
+<li>de ports </li>
+<li>de sockets </li>
 </ul>
+<details class="note">
+<summary>Commandes</summary>
+<div class="codehilite"><pre><span></span><code>```sh
+semanage port -l | grep 8080
+ss -Ztulpen
+ps -eZ | grep flask
+ls -Z /data/public
+```
+</code></pre></div>
+
+</details>
 <h4 id="premiers-blocages">Premiers blocages</h4>
 <ul>
-<li>
-<p>Lancer le script Python avec <code>python3 app.py</code></p>
-</li>
-<li>
-<p>Tenter d’accéder aux fichiers via navigateur ou curl</p>
-</li>
-<li>
-<p>Observer les messages d’erreur dans :</p>
-</li>
-<li>
-<p>le navigateur / terminal</p>
-</li>
+<li>Lancer le script Python avec <code>python3 app.py</code></li>
+<li>Tenter d’accéder aux fichiers via navigateur ou curl</li>
+<li>Observer les messages d’erreur dans :</li>
+<li>le navigateur / terminal</li>
 <li>
 <p>les logs journaux</p>
 </li>

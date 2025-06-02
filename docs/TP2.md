@@ -1,19 +1,19 @@
-# Apache HTTPD et restauration des contextes
+## Apache HTTPD et restauration des contextes
 
-## Objectif
+### Objectif
 
 Corriger un blocage SELinux causé par un mauvais contexte sur un répertoire personnalisé utilisé par Apache.
 
-## Étapes
+### Étapes
 
-### Installer Apache
+#### Installer Apache
 
 ```bash
 sudo dnf install -y httpd
 sudo systemctl enable --now httpd
 ```
 
-### Créer un dossier personnalisé
+#### Créer un dossier personnalisé
 
 ```bash
 sudo mkdir /webdata
@@ -21,7 +21,7 @@ echo "SELinux TP" | sudo tee /webdata/index.html
 sudo chmod -R 755 /webdata
 ```
 
-### Modifier la configuration Apache
+#### Modifier la configuration Apache
 
 ```bash
 sudo cp /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/tp.conf
@@ -31,7 +31,7 @@ sudo systemctl restart httpd
 
 Accédez à `http://localhost` et notez l'erreur 403 provoquée par SELinux.
 
-### Vérifier le contexte SELinux
+#### Vérifier le contexte SELinux
 
 ```bash
 ls -Zd /webdata
@@ -39,7 +39,7 @@ ls -Zd /webdata
 
 Le contexte est incorrect (`default_t`), ce qui empêche Apache d'accéder aux fichiers.
 
-### Corriger avec `semanage` et `restorecon`
+#### Corriger avec `semanage` et `restorecon`
 
 ```bash
 sudo semanage fcontext -a -t httpd_sys_content_t "/webdata(/.*)?"
@@ -50,15 +50,15 @@ Rechargez la page web. L'accès doit maintenant être fonctionnel.
 
 ---
 
-# Utilisation des booléens SELinux avec SSH
+### Utilisation des booléens SELinux avec SSH
 
-## Objectif
+#### Objectif
 
 Activer un booléen SELinux pour permettre une fonctionnalité bloquée par défaut (ex. shell restreint via SSH).
 
-## Étapes
+#### Étapes
 
-### Installer et configurer un shell restreint
+##### Installer et configurer un shell restreint
 
 ```bash
 sudo dnf install -y rssh
@@ -71,11 +71,11 @@ sudo useradd -m -s /usr/bin/rssh rsshuser
 sudo passwd rsshuser
 ```
 
-### Tester la connexion SSH
+##### Tester la connexion SSH
 
 Tentative de connexion via SSH. Échec attendu dû à une restriction SELinux.
 
-### Diagnostiquer le blocage
+##### Diagnostiquer le blocage
 
 ```bash
 sudo ausearch -m AVC -ts recent
@@ -88,7 +88,7 @@ Identifier la recommandation et vérifier les booléens associés :
 getsebool -a | grep ssh
 ```
 
-### Appliquer la modification
+##### Appliquer la modification
 
 ```bash
 sudo setsebool -P allowssh_chroot_full_access on
@@ -98,15 +98,15 @@ Tester à nouveau la connexion SSH.
 
 ---
 
-# Manipulation directe des contextes avec `chcon`
+### Manipulation directe des contextes avec `chcon`
 
-## Objectif
+#### Objectif
 
 Modifier temporairement un contexte SELinux sans toucher aux règles persistantes, pour un cas de test ou débogage.
 
-## Étapes
+#### Étapes
 
-### Créer un fichier de test
+##### Créer un fichier de test
 
 ```bash
 mkdir ~/testselinux
@@ -114,14 +114,14 @@ touch ~/testselinux/file.txt
 ls -Z ~/testselinux/file.txt
 ```
 
-### Changer le contexte
+##### Changer le contexte
 
 ```bash
 sudo chcon -t httpd_sys_content_t ~/testselinux/file.txt
 ls -Z ~/testselinux/file.txt
 ```
 
-### Lancer un serveur HTTP local
+##### Lancer un serveur HTTP local
 
 ```bash
 python3 -m http.server --directory ~/testselinux 8080
@@ -129,10 +129,145 @@ python3 -m http.server --directory ~/testselinux 8080
 
 Accéder à `http://localhost:8080/file.txt`. SELinux ne devrait pas bloquer si le contexte est correctement appliqué.
 
-### Réinitialiser le contexte
+##### Réinitialiser le contexte
 
 ```bash
 sudo restorecon -v ~/testselinux/file.txt
 ```
 
 Vérifier que le contexte d’origine a été restauré.
+
+
+## Flask — Gestion avancée de la politique SELinux
+
+### Contexte
+
+Vous travaillez toujours sur l'application `fileserve`, un service web développé en Python qui expose des fichiers depuis différents dossiers (`/data/public`, `/data/private`, etc.).
+L'application est installée et fonctionnelle *en permissive*, mais vous souhaitez maintenant la rendre pleinement **compatible avec une configuration SELinux en mode `enforcing`**.
+
+---
+
+### Phase 1 — Revenir en mode enforcing
+
+**Question :**
+L’application avait été laissée en mode permissive pour faciliter les tests.
+Repassez en **mode enforcing**, puis relancez l’application.
+
+**Correction :**
+
+```bash
+sudo setenforce 1
+getenforce  # => Enforcing
+```
+
+→ Vous devriez observer des erreurs (erreurs 403 côté web, ou plantages silencieux).
+
+---
+
+### Phase 2 — Vérifier les labels sur les fichiers
+
+**Question :**
+Quels sont les labels appliqués aux fichiers que sert votre application (`/data/*`) ?
+Sont-ils compatibles avec une application web ? Sinon, corrigez-les.
+
+**Correction :**
+
+```bash
+ls -lZ /data
+# Vous constaterez que les fichiers ne sont pas en type httpd_sys_content_t
+
+sudo semanage fcontext -a -t httpd_sys_content_t "/data(/.*)?"
+sudo restorecon -Rv /data
+```
+
+---
+
+### Phase 3 — Diagnostiquer avec `audit2why`
+
+**Question :**
+Quelles sont les erreurs remontées par SELinux ?
+Utilisez les bons outils pour les identifier.
+
+**Correction :**
+
+```bash
+sudo ausearch -m AVC -ts recent
+# Copier une erreur
+
+# Puis :
+sudo ausearch -m AVC -ts recent | audit2why
+```
+
+→ Identifier si une politique empêche l’accès à un fichier, un port, ou une ressource.
+
+---
+
+### Phase 4 — Vérifier les ports utilisés
+
+**Question :**
+L'application écoute sur le port 8080. Est-ce que ce port est autorisé pour `httpd_t` par la politique SELinux actuelle ?
+
+**Correction :**
+
+```bash
+sudo semanage port -l | grep http_port_t
+# Si 8080 n’est pas listé :
+sudo semanage port -a -t http_port_t -p tcp 8080
+```
+
+---
+
+### Phase 5 — Vérifier les booléens SELinux
+
+**Question :**
+Certains comportements de l’application sont conditionnés par des booléens (accès à des fichiers utilisateurs, réseau, etc.).
+Quelles options peuvent être pertinentes dans votre cas ? Activez-les si nécessaire.
+
+**Correction :**
+
+```bash
+getsebool -a | grep httpd
+# Exemple : autoriser l’accès réseau
+sudo setsebool -P httpd_can_network_connect on
+```
+
+---
+
+### Phase 6 — Nettoyage et standardisation
+
+**Question :**
+Avez-vous utilisé des `chcon` manuels ? Corrigez cela pour garantir que les étiquettes soient **persistantes** après reboot ou relabel.
+
+**Correction :**
+
+* Identifier les `chcon` :
+
+```bash
+sudo find /data -context "*:object_r:admin_home_t:s0"  # Exemple de mauvais type
+```
+
+* Fixer avec :
+
+```bash
+sudo restorecon -Rv /data
+```
+
+---
+
+### Phase 7 — Valider l'intégration propre
+
+**Question :**
+Redémarrez l'application `fileserve`. L'application fonctionne-t-elle correctement **sans être en permissive**, et **sans avoir de nouveaux AVC** dans les 2 dernières minutes ?
+
+**Correction :**
+
+```bash
+sudo ausearch -m AVC -ts recent
+# Rien ne doit ressortir
+```
+
+---
+
+### Étape bonus
+
+Vous souhaitez déplacer les fichiers statiques vers `/srv/files`. Refaites l’intégration propre **depuis zéro**, mais sur ce nouveau chemin.

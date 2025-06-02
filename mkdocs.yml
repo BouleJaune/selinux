@@ -1,8 +1,10 @@
 site_name: SELinux
 nav:
-  - Intro: 'index.md'
+  - Programme: 'index.md'
   - Introduction et troubleshooting: 'TP1.md'
   - Gestion de la politique SELinux: 'TP2.md'
+  - MLS/MCS: 'TP3.md'
+  - SELinux et conteneurs: 'TP4.md'
 # Theme material
 theme:
   name: "material"

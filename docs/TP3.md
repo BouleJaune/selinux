@@ -1,4 +1,3 @@
-
 ## Multi-Level Security (MLS) & Multi-Category Security (MCS)
 
 ### Objectifs pédagogiques
@@ -145,3 +144,145 @@ rm -f /tmp/data_alice /tmp/data_bob /tmp/data_topsecret
 
 * Créez un script de vérification automatique du niveau et des catégories autorisées d’un utilisateur.
 * Intégrez ce mécanisme dans un environnement Podman ou systemd avec `selinux-label`.
+
+
+
+
+## Flask — SELinux & MCS/MLS
+
+### Objectif général
+
+Vous devez restreindre l’accès aux fichiers produits ou consultés par l’application `fileserve` selon des **niveaux de confidentialité** ou **catégories**.
+
+L’objectif est de simuler un système à compartiments : un utilisateur ne doit accéder qu’à ses propres documents en fonction de son niveau ou de sa catégorie (ex : équipe A vs B, ou classification Confidentiel vs Public).
+
+---
+
+### Phase 1 — Activer la politique MLS
+
+**Question :**
+Vérifiez si la politique SELinux utilisée est bien `mls`. Sinon, modifiez-la et redémarrez.
+
+**Correction :**
+
+```bash
+sestatus | grep Policy
+# Pour changer (si nécessaire)
+sudo dnf install selinux-policy-mls
+sudo grubby --update-kernel=ALL --args="selinux=1 enforcing=1"
+sudo setsebool secure_mode_policyload on
+sudo reboot
+```
+
+---
+
+### Phase 2 — Vérifier les niveaux de sécurité
+
+**Question :**
+Quels niveaux sont définis sur votre système ? Quel est celui de votre utilisateur actuel ?
+
+**Correction :**
+
+```bash
+semanage user -l
+id -Z
+```
+
+---
+
+### Phase 3 — Attribuer des niveaux de confidentialité à des utilisateurs
+
+**Question :**
+Attribuez à `userA` le niveau `s0:c0`, et à `userB` le niveau `s0:c1`.
+
+**Correction :**
+
+```bash
+sudo semanage login -a -s user_u -r s0-s0:c0 userA
+sudo semanage login -a -s user_u -r s0-s0:c1 userB
+```
+
+Vérifiez :
+
+```bash
+semanage login -l
+```
+
+---
+
+### Phase 4 — Créer des fichiers étiquetés par niveau
+
+**Question :**
+Créez deux fichiers :
+
+* Un fichier accessible uniquement par `userA` (catégorie c0)
+* Un fichier accessible uniquement par `userB` (catégorie c1)
+
+**Correction :**
+
+```bash
+touch /data/userA.txt /data/userB.txt
+chcon --user=user_u --role=object_r --type=default_t --range=s0:c0 /data/userA.txt
+chcon --user=user_u --role=object_r --type=default_t --range=s0:c1 /data/userB.txt
+```
+
+---
+
+### Phase 5 — Vérification des accès
+
+**Question :**
+Connectez-vous en tant que `userA` et `userB`, testez l’accès croisé aux fichiers. Que constatez-vous ?
+
+**Correction :**
+
+```bash
+su - userA
+cat /data/userA.txt  # OK
+cat /data/userB.txt  # Permission denied (attendu)
+
+su - userB
+cat /data/userB.txt  # OK
+cat /data/userA.txt  # Permission denied (attendu)
+```
+
+---
+
+### Phase 6 — Application concrète avec votre service
+
+**Question :**
+Configurez `fileserve` pour fonctionner selon le même principe :
+
+* L’instance lancée par `userA` ne doit lire que les fichiers `s0:c0`
+* Celle de `userB` que les `s0:c1`
+
+**Correction :**
+Il faut :
+
+* S’assurer que les processus ont un contexte `s0:c0` ou `s0:c1`
+* Les fichiers servis doivent être labellisés avec le bon range
+
+```bash
+runcon -r system_r -t user_t -l s0:c0 ./fileserve  # pour userA
+runcon -r system_r -t user_t -l s0:c1 ./fileserve  # pour userB
+```
+
+Labellisez les fichiers correctement :
+
+```bash
+chcon --range=s0:c0 /data/userA-files/*
+chcon --range=s0:c1 /data/userB-files/*
+```
+
+---
+
+### Étape bonus — Multi catégories
+
+**Question :**
+Attribuez à un utilisateur les deux catégories `c0,c1`, testez qu’il peut lire les deux fichiers.
+
+**Correction :**
+
+```bash
+sudo semanage login -a -s user_u -r s0-s0:c0,c1 userAdmin
+runcon -r system_r -t user_t -l s0:c0,c1 ./fileserve
+```

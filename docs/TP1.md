@@ -176,14 +176,3 @@ Elle n’est pas encore conteneurisée : vous l'exécuterez directement sur votr
 * Modifier le script pour écrire dans `/tmp`, observer le comportement
 * Remonter en **permissive**, relancer (`setenforce 0`), puis `audit2allow` pour proposer une règle
 * Revenir en **enforcing**, appliquer `audit2allow` en module temporaire (`checkmodule`, `semodule_package`, `semodule -i`)
-
----
-
-### À livrer
-
-* Contexte des objets manipulés
-* Journal AVC annoté
-* Une hypothèse de règle nécessaire
-* L’état des contextes avant/après
-* Un court rapport sur ce qu’a bloqué SELinux, et **pourquoi**
-

@@ -271,3 +271,141 @@ sudo ausearch -m AVC -ts recent
 ### Étape bonus
 
 Vous souhaitez déplacer les fichiers statiques vers `/srv/files`. Refaites l’intégration propre **depuis zéro**, mais sur ce nouveau chemin.
+
+
+
+
+## Flask : Création de modules personnalisés SELinux
+
+### Contexte
+
+Votre application `fileserve`, toujours fonctionnelle en mode `enforcing`, a désormais un nouveau composant : un sous-service qui écrit des logs personnalisés dans `/custom/logs` et accède à un fichier de configuration dans `/custom/conf/config.yml`.
+
+Ces actions déclenchent des alertes SELinux, même si les accès sont légitimes dans le cadre de votre service. Il est donc temps de créer une **politique personnalisée**.
+
+---
+
+### Phase 1 — Identifier les AVC en permissive
+
+**Question :**
+Repassez SELinux en mode permissive et déclenchez les actions problématiques de l’application (`logs`, lecture de `config.yml`).
+Quelles sont les violations signalées ?
+
+**Correction :**
+
+```bash
+sudo setenforce 0
+# Lancer l’application
+sudo ausearch -m AVC -ts recent
+```
+
+---
+
+### Phase 2 — Générer un module temporaire avec audit2allow
+
+**Question :**
+Générez un module personnalisé à partir des AVC observés.
+
+**Correction :**
+
+```bash
+sudo ausearch -m AVC -ts recent | audit2allow -M fileserve_custom
+sudo semodule -i fileserve_custom.pp
+```
+
+**Attention :** Cela crée un module, mais sans réelle documentation ni contrôle précis des règles.
+
+---
+
+### Phase 3 — Écrire manuellement un module minimal
+
+**Question :**
+Plutôt que d’accepter tous les AVC aveuglément, vous allez créer une version maîtrisée du module avec vos propres règles.
+Générez le squelette :
+
+**Correction :**
+
+```bash
+mkdir fileserve_custom
+cd fileserve_custom
+sepolicy generate --init fileserve_custom
+```
+
+Cela crée un `.te` avec des permissions de base.
+
+---
+
+### Phase 4 — Modifier les règles
+
+**Question :**
+Éditez le fichier `.te` et ajoutez manuellement les permissions nécessaires :
+
+* Autoriser `fileserve_custom_t` à lire `/custom/conf/`
+* Autoriser l’écriture dans `/custom/logs/`
+
+**Correction :** (dans `fileserve_custom.te`)
+
+```te
+# Ajout manuel dans le .te
+allow fileserve_custom_t var_log_t:file { write append open getattr };
+allow fileserve_custom_t etc_t:file { read open getattr };
+```
+
+Et si besoin :
+
+```te
+files_type(custom_logs_t)
+files_type(custom_conf_t)
+```
+
+---
+
+### Phase 5 — Relabelliser les répertoires utilisés
+
+**Question :**
+Ajoutez les bons contextes pour `/custom/logs` et `/custom/conf`
+
+**Correction :**
+
+```bash
+sudo semanage fcontext -a -t custom_logs_t "/custom/logs(/.*)?"
+sudo semanage fcontext -a -t custom_conf_t "/custom/conf(/.*)?"
+sudo restorecon -Rv /custom
+```
+
+---
+
+### Phase 6 — Compilation et installation du module
+
+**Question :**
+Compilez et installez le module que vous venez d’écrire à la main.
+
+**Correction :**
+
+```bash
+make -f /usr/share/selinux/devel/Makefile
+sudo semodule -i fileserve_custom.pp
+```
+
+---
+
+### Phase 7 — Validation finale
+
+**Question :**
+Passez SELinux en enforcing. L’application fonctionne-t-elle correctement avec votre module ?
+
+**Correction :**
+
+```bash
+sudo setenforce 1
+# Lancer le service et surveiller
+sudo ausearch -m AVC -ts recent
+```
+
+---
+
+### Étape bonus
+
+**Question :**
+Vous souhaitez que votre service puisse aussi utiliser des sockets Unix (`/run/fileserve.sock`). Ajoutez cela à votre module, avec les permissions SELinux nécessaires.
+

@@ -102,7 +102,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#cours-selinux" class="md-skip">
+        <a href="#comprendre-selinux-et-savoir-modifier-la-politique-de-securite" class="md-skip">
           Aller au contenu
         </a>
       
@@ -138,7 +138,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Intro
+              Programme
             
           </span>
         </div>
@@ -245,17 +245,127 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Programme
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="." class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
-    Intro
+    Programme
     
   </span>
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objectifs-pedagogiques" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectifs pédagogiques :
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#programme" class="md-nav__link">
+    <span class="md-ellipsis">
+      Programme :
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Programme :">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#introduction-a-selinux" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduction à SELinux
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diagnostic-et-analyse-des-blocages-selinux" class="md-nav__link">
+    <span class="md-ellipsis">
+      Diagnostic et analyse des blocages SELinux
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gestion-avancee-de-la-politique-selinux" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestion avancée de la politique SELinux
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creation-et-modification-de-modules-de-politique-personnalisee" class="md-nav__link">
+    <span class="md-ellipsis">
+      Création et modification de modules de politique personnalisée
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selinux-et-mcsmls" class="md-nav__link">
+    <span class="md-ellipsis">
+      SELinux et MCS/MLS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selinux-et-conteneurs-podman-rootless" class="md-nav__link">
+    <span class="md-ellipsis">
+      SELinux et conteneurs (Podman / rootless)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -369,6 +479,92 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objectifs-pedagogiques" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectifs pédagogiques :
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#programme" class="md-nav__link">
+    <span class="md-ellipsis">
+      Programme :
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Programme :">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#introduction-a-selinux" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduction à SELinux
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diagnostic-et-analyse-des-blocages-selinux" class="md-nav__link">
+    <span class="md-ellipsis">
+      Diagnostic et analyse des blocages SELinux
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gestion-avancee-de-la-politique-selinux" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestion avancée de la politique SELinux
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creation-et-modification-de-modules-de-politique-personnalisee" class="md-nav__link">
+    <span class="md-ellipsis">
+      Création et modification de modules de politique personnalisée
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selinux-et-mcsmls" class="md-nav__link">
+    <span class="md-ellipsis">
+      SELinux et MCS/MLS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selinux-et-conteneurs-podman-rootless" class="md-nav__link">
+    <span class="md-ellipsis">
+      SELinux et conteneurs (Podman / rootless)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -383,7 +579,58 @@
 
 
 
-<h1 id="cours-selinux">Cours SELinux</h1>
+<h1 id="comprendre-selinux-et-savoir-modifier-la-politique-de-securite">Comprendre SELinux et savoir modifier la politique de sécurité</h1>
+<h2 id="objectifs-pedagogiques">Objectifs pédagogiques :</h2>
+<ul>
+<li>Approfondir la compréhension du fonctionnement de SELinux</li>
+<li>Maîtriser les outils de gestion et d’analyse des politiques SELinux</li>
+<li>Savoir écrire, modifier et déployer des modules de politique personnalisée</li>
+<li>Comprendre l’usage de SELinux dans les environnements à haute sécurité (MLS/MCS)</li>
+<li>Appliquer SELinux efficacement dans des environnements conteneurisés</li>
+</ul>
+<h2 id="programme">Programme :</h2>
+<h3 id="introduction-a-selinux">Introduction à SELinux</h3>
+<ul>
+<li>Rappel du système de droits classique Linux et mécanisme MAC</li>
+<li>Présentation du contexte de sécurité : <code>user:role:type:level</code></li>
+<li>Modes de fonctionnement et politiques disponibles (<code>targeted</code>, <code>mls</code>, <code>strict</code>)</li>
+<li>États de fonctionnement (<code>getenforce</code>, <code>setenforce</code>, <code>sestatus</code>, <code>selinuxenabled</code>)</li>
+</ul>
+<h3 id="diagnostic-et-analyse-des-blocages-selinux">Diagnostic et analyse des blocages SELinux</h3>
+<ul>
+<li>Lecture et compréhension des messages AVC</li>
+<li>Utilisation des outils <code>ausearch</code>, <code>audit2why</code>, <code>audit2allow</code></li>
+<li>Présentation de <code>sealert</code> et du service <code>setroubleshoot</code></li>
+<li>Mise en évidence de cas pratiques de blocage et résolution</li>
+</ul>
+<h3 id="gestion-avancee-de-la-politique-selinux">Gestion avancée de la politique SELinux</h3>
+<ul>
+<li>Exploration d’une politique : <code>seinfo</code>, <code>sesearch</code>, <code>apol</code></li>
+<li>Commandes : <code>restorecon</code>, <code>setfiles</code>, <code>fixfiles</code>, <code>chcon</code>, <code>semanage</code></li>
+<li>Gestion des booléens : <code>getsebool</code>, <code>setsebool</code></li>
+</ul>
+<h3 id="creation-et-modification-de-modules-de-politique-personnalisee">Création et modification de modules de politique personnalisée</h3>
+<ul>
+<li>Structure des fichiers</li>
+<li>Compilation et déploiement de modules</li>
+<li>Écriture de règles personnalisées</li>
+<li>Création de modules simples et modules plus complexes</li>
+<li>Bonnes pratiques de maintenance des modules personnalisés</li>
+</ul>
+<h3 id="selinux-et-mcsmls">SELinux et MCS/MLS</h3>
+<ul>
+<li>Présentation de MCS (Multi Category Security) et MLS (Multi Level Security)</li>
+<li>Gestion des niveaux de sécurité et catégories MCS</li>
+<li>Cas d’usage et application concrète de l’isolement via MCS/MLS</li>
+</ul>
+<h3 id="selinux-et-conteneurs-podman-rootless">SELinux et conteneurs (Podman / rootless)</h3>
+<ul>
+<li>Fonctionnement de SELinux avec des conteneurs OCI (<code>container_t</code>, policy <code>container-selinux</code>)</li>
+<li>Impact des options <code>:z</code> et <code>:Z</code> sur les contextes des volumes</li>
+<li>Utilisation de <code>--security-opt label=...</code> pour gérer les contextes</li>
+<li>Policy custom pour container (Udica)</li>
+<li>Cas pratiques </li>
+</ul>
 
 
 

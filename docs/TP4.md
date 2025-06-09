@@ -1,371 +1,288 @@
-## Conteneurs Podman en rootless
+## Multi-Level Security (MLS) & Multi-Category Security (MCS)
 
 ### Objectifs pédagogiques
 
-* Comprendre comment SELinux isole les conteneurs en mode rootless.
-* Manipuler les options `:z`, `:Z`, `--security-opt` dans Podman.
-* Observer les contextes des processus et volumes dans l’environnement utilisateur.
-* Expérimenter avec des politiques personnalisées (Udica).
+* Comprendre les principes de MLS et MCS dans SELinux.
+* Manipuler les niveaux (`s0`, `s1`, etc.) et les catégories (`c0`, `c1`, etc.).
+* Mettre en œuvre un isolement de données basé sur les niveaux et catégories.
+* Gérer les utilisateurs SELinux avec des plages MLS/MCS définies.
 
 ---
 
 ### Pré-requis
 
-* Fedora ou RHEL avec Podman installé (`dnf install podman udica -y`)
-* SELinux activé (`getenforce` doit retourner `Enforcing`)
-* Utilisateur non-root avec droits sudo
-* Accès SSH ou TTY
+* SELinux activé en mode `enforcing`.
+* Politique `mls` ou `targeted` avec MCS (selon la distribution).
+* Utiliser une machine Fedora ou RHEL avec le support de MLS/MCS (ex. : `mls` activé via `/etc/selinux/config`).
+* Avoir le paquet `policycoreutils`, `mcstrans`, `setools-console` installé.
 
 ---
 
-### Mise en place de l’environnement
+### Contexte du TP
 
-Créer un utilisateur dédié :
+Nous allons simuler une séparation d’informations classifiées par niveaux (MLS) et par catégories (MCS). Deux utilisateurs vont avoir des droits différents sur des fichiers en fonction de leur niveau ou de leur appartenance à des catégories.
+
+---
+
+### Création d’un environnement contrôlé
+
+#### Création des utilisateurs Linux et SELinux
 
 ```bash
-sudo useradd -m podtest
-sudo passwd podtest
+useradd alice
+useradd bob
 ```
 
-Se connecter avec ce nouvel utilisateur :
+Définir une plage MLS/MCS restreinte à chaque utilisateur :
 
 ```bash
-su - podtest
+semanage user -a -R "staff_r" -r "s0:c0" mcs_alice
+semanage user -a -R "staff_r" -r "s0:c1" mcs_bob
+semanage login -a -s mcs_alice alice
+semanage login -a -s mcs_bob bob
+```
+
+Vérification :
+
+```bash
+semanage login -l
 ```
 
 ---
 
-## Lancement d’un conteneur de base
+### Manipulation de fichiers avec contexte MCS
 
-Lancez un simple conteneur rootless et observer ses paramètres SELinux.
+Créer un fichier classifié pour chaque catégorie :
 
-**Instructions** :
+```bash
+touch /tmp/data_alice /tmp/data_bob
+chcon -t user_home_t -l s0:c0 /tmp/data_alice
+chcon -t user_home_t -l s0:c1 /tmp/data_bob
+```
 
-* Connectez-vous avec un utilisateur non privilégié
-* Lancez un conteneur simple :
+#### Test de lecture croisée
 
-  ```bash
-  podman run -d --name tp-web -p 8080:80 docker.io/library/nginx
-  ```
-* Observez les contextes :
+Connectez-vous successivement en tant que `alice` et `bob`, testez l'accès à chaque fichier :
 
-  ```bash
-  ps -efZ | grep nginx
-  id -Z
-  ```
+```bash
+su - alice
+cat /tmp/data_alice
+cat /tmp/data_bob
+```
 
-**Questions** :
+Puis :
 
-* Quel est le domaine SELinux du processus nginx ?
-* Quel est le contexte SELinux de votre utilisateur ?
+```bash
+su - bob
+cat /tmp/data_bob
+cat /tmp/data_alice
+```
+
+**Question** : Que constatez-vous ? Pourquoi ?
 
 ---
 
-## Montage d’un volume sans option de label
+### Changement de contexte de processus utilisateur
 
-**But** : Observer un échec lié au contexte SELinux.
+Observez les contextes SELinux avec :
 
-**Instructions** :
+```bash
+id -Z
+```
 
-* Créez un répertoire local et copiez-y un `index.html`
-* Montez ce répertoire dans `/usr/share/nginx/html` sans option :
+Puis changez temporairement le contexte MCS d’un shell :
 
-  ```bash
-  podman run -d --rm -p 8080:80 -v ./html:/usr/share/nginx/html nginx
-  ```
-* Ouvrez le navigateur ou faites un `curl localhost:8080`
+```bash
+sudo runcon -l s0:c0 -- bash
+```
 
-**Question** :
-
-* L’accès fonctionne-t-il ? Si non, pourquoi ?
+Tentez à nouveau la lecture de fichiers. Testez d'autres catégories.
 
 ---
 
-## 3. Résolution avec les labels de volumes
+### Utilisation avancée : plages MLS
 
-**But** : Comprendre l’impact de `:z` et `:Z`.
+Modifiez l'utilisateur `alice` pour qu'il ait une plage de niveaux (ex : `s0 - s1`)
 
-**Instructions** :
+```bash
+semanage user -m -R "staff_r" -r "s0 - s1:c0.c3" mcs_alice
+```
 
-* Relancez le conteneur avec l’option `:z` :
+Créez un fichier avec un niveau supérieur :
 
-  ```bash
-  podman run -d --rm -p 8080:80 -v ./html:/usr/share/nginx/html:z nginx
-  ```
-* Observez les contextes du répertoire :
+```bash
+chcon -t user_home_t -l s1 /tmp/data_topsecret
+```
 
-  ```bash
-  ls -Zd ./html
-  ```
-
-**Questions** :
-
-* Quelle est la différence entre `:z` et `:Z` ?
-* Pourquoi `:z` fonctionne dans ce cas ?
+Testez l’accès avec `alice`. Essayez de changer de niveau avec `runcon`.
 
 ---
 
-## 4. Suppression manuelle des contextes
+### Question bonus
 
-**But** : Forcer un blocage et observer un AVC.
-
-**Instructions** :
-
-* Supprimez le label :
-
-  ```bash
-  chcon -t etc_t ./html
-  ```
-* Relancez le conteneur avec le volume.
-* Observez :
-
-  ```bash
-  journalctl -xe | grep AVC
-  ```
-
-**Question** :
-
-* Que dit le message AVC ?
-* Quelle commande permettrait de restaurer le bon contexte ?
-
----
-
-## 5. Nettoyage
-
-* Supprimez tous les conteneurs :
-
-  ```bash
-  podman rm -a -f
-  ```
-* Supprimez le répertoire si besoin :
-
-  ```bash
-  rm -rf ./html
-  ```
----
-
-### Création d’une politique personnalisée avec Udica
-
-Générer le JSON de profil :
-
-```bash
-podman generate systemd --name secure-nginx > podman-secure.service
-```
-
-Créer une politique personnalisée :
-
-```bash
-udica secure-nginx
-```
-
-Installer le module généré :
-
-```bash
-sudo semodule -i secure-nginx.cil
-```
-
-Relancer le conteneur avec le nouveau label :
-
-```bash
-podman run --rm -d --name nginx-udica \
-  --security-opt label=type:secure_nginx.process \
-  -v ~/nginx_data:/usr/share/nginx/html:ro,Z \
-  -p 8085:80 nginx
-```
-
-Vérifier :
-
-```bash
-ps -eZ | grep nginx
-```
+* Que se passe-t-il si `alice` a accès à plusieurs catégories ? Peut-elle combiner les lectures ?
+* Peut-on attribuer plusieurs catégories à un fichier ?
+* Quel est l’impact de la commande `mcstransd` dans l'affichage des contextes ?
 
 ---
 
 ### Nettoyage
 
 ```bash
-podman stop -a
-podman rm -a
-podman rmi nginx
-sudo semodule -r secure-nginx
-rm -rf ~/nginx_data podman-secure.service
+userdel -r alice
+userdel -r bob
+semanage login -d alice
+semanage login -d bob
+semanage user -d mcs_alice
+semanage user -d mcs_bob
+rm -f /tmp/data_alice /tmp/data_bob /tmp/data_topsecret
 ```
 
 ---
 
-### Questions bonus
+### Aller plus loin
 
-* Pourquoi `:Z` est risqué à utiliser sur des fichiers partagés ?
-* Peut-on utiliser `Udica` avec Docker ?
-* Que permet de faire `--security-opt label=disable` et dans quels cas est-ce utile ?
-
+* Créez un script de vérification automatique du niveau et des catégories autorisées d’un utilisateur.
+* Intégrez ce mécanisme dans un environnement Podman ou systemd avec `selinux-label`.
 
 
 
 
-## Flask — SELinux et conteneurs (Podman rootless)
+## Flask — SELinux & MCS/MLS
 
 ### Objectif général
 
-L'application `fileserve` développée précédemment doit désormais être conteneurisée avec Podman en **mode rootless**.
+Vous devez restreindre l’accès aux fichiers produits ou consultés par l’application `fileserve` selon des **niveaux de confidentialité** ou **catégories**.
 
-Vous devez vous assurer que :
-
-* Le conteneur tourne avec les bons contextes SELinux
-* Les volumes sont correctement montés et accessibles
-* Les politiques SELinux empêchent toute élévation de privilèges ou sortie du périmètre
+L’objectif est de simuler un système à compartiments : un utilisateur ne doit accéder qu’à ses propres documents en fonction de son niveau ou de sa catégorie (ex : équipe A vs B, ou classification Confidentiel vs Public).
 
 ---
 
-### Phase 1 — Conteneurisation simple de `fileserve`
+### Phase 1 — Activer la politique MLS
 
 **Question :**
-Créez une image Podman contenant `fileserve`, construite depuis un `Dockerfile`. Testez le conteneur en rootless.
-
-**Correction :**
-
-```Dockerfile
-FROM fedora:latest
-RUN dnf install -y python3
-COPY fileserve.py /usr/local/bin/fileserve
-ENTRYPOINT ["python3", "/usr/local/bin/fileserve"]
-```
-
-```bash
-podman build -t fileserve .
-podman run --rm localhost/fileserve
-```
-
----
-
-### Phase 2 — Activation de SELinux dans les volumes
-
-**Question :**
-Montez un volume `/srv/files` contenant des documents. Quel comportement observe-t-on sans options `:z` ou `:Z` ?
+Vérifiez si la politique SELinux utilisée est bien `mls`. Sinon, modifiez-la et redémarrez.
 
 **Correction :**
 
 ```bash
-mkdir -p /srv/files
-echo "data" > /srv/files/test.txt
-
-podman run --rm -v /srv/files:/data:ro localhost/fileserve
-# Erreur d'accès probable (Permission denied)
+sestatus | grep Policy
+# Pour changer (si nécessaire)
+sudo dnf install selinux-policy-mls
+sudo grubby --update-kernel=ALL --args="selinux=1 enforcing=1"
+sudo setsebool secure_mode_policyload on
+sudo reboot
 ```
 
 ---
 
-### Phase 3 — Corriger avec `:Z` ou `:z`
+### Phase 2 — Vérifier les niveaux de sécurité
 
 **Question :**
-Testez avec les deux options et expliquez la différence entre `:z` et `:Z`.
+Quels niveaux sont définis sur votre système ? Quel est celui de votre utilisateur actuel ?
 
 **Correction :**
 
 ```bash
-podman run --rm -v /srv/files:/data:ro,z localhost/fileserve
-podman run --rm -v /srv/files:/data:ro,Z localhost/fileserve
-```
-
-* `:z` = partageable entre plusieurs conteneurs
-* `:Z` = usage exclusif pour ce conteneur (isolation plus forte)
-
----
-
-### Phase 4 — Inspection des contextes
-
-**Question :**
-Vérifiez les contextes SELinux appliqués au volume monté.
-
-**Correction :**
-
-```bash
-ls -Z /srv/files
-# Devrait montrer un contexte du type `system_u:object_r:container_file_t:s0`
+semanage user -l
+id -Z
 ```
 
 ---
 
-### Phase 5 — Vérifier le contexte du conteneur lui-même
+### Phase 3 — Attribuer des niveaux de confidentialité à des utilisateurs
 
 **Question :**
-Quel est le contexte SELinux du processus dans le conteneur ? Et celui du volume vu de l’intérieur ?
+Attribuez à `userA` le niveau `s0:c0`, et à `userB` le niveau `s0:c1`.
 
 **Correction :**
 
 ```bash
-podman run --rm localhost/fileserve id -Z
-podman run --rm localhost/fileserve ls -Z /data
+sudo semanage login -a -s user_u -r s0-s0:c0 userA
+sudo semanage login -a -s user_u -r s0-s0:c1 userB
+```
+
+Vérifiez :
+
+```bash
+semanage login -l
 ```
 
 ---
 
-### Phase 6 — Empêcher l'accès à d'autres volumes
+### Phase 4 — Créer des fichiers étiquetés par niveau
 
 **Question :**
-Créez un second dossier `/srv/private`, montez-le dans un second conteneur. Tentez d’y accéder depuis le premier conteneur. Est-ce autorisé ?
+Créez deux fichiers :
+
+* Un fichier accessible uniquement par `userA` (catégorie c0)
+* Un fichier accessible uniquement par `userB` (catégorie c1)
 
 **Correction :**
-Si on utilise `:Z` dans les deux, la séparation fonctionne :
 
 ```bash
-podman run -v /srv/private:/private:Z ...
-# Si les deux conteneurs ont :Z, ils ne partagent pas les permissions
+touch /data/userA.txt /data/userB.txt
+chcon --user=user_u --role=object_r --type=default_t --range=s0:c0 /data/userA.txt
+chcon --user=user_u --role=object_r --type=default_t --range=s0:c1 /data/userB.txt
 ```
 
 ---
 
-### Phase 7 — Politique SELinux spécifique via `--security-opt`
+### Phase 5 — Vérification des accès
 
 **Question :**
-Changez le label du conteneur au runtime pour le faire fonctionner dans un autre domaine.
+Connectez-vous en tant que `userA` et `userB`, testez l’accès croisé aux fichiers. Que constatez-vous ?
 
 **Correction :**
 
 ```bash
-podman run --security-opt label=type:my_container_t ...
-```
+su - userA
+cat /data/userA.txt  # OK
+cat /data/userB.txt  # Permission denied (attendu)
 
-Il faut que `my_container_t` soit une catégorie ou type valide dans SELinux.
-
----
-
-### Phase 8 — Génération d’une politique personnalisée avec udica
-
-**Question :**
-Utilisez **udica** pour générer une politique spécifique à votre conteneur `fileserve`.
-
-**Correction :**
-
-```bash
-dnf install udica
-udica -j fileserve.json
-semodule -i fileserve.cil
-```
-
-Fichier `fileserve.json` minimal :
-
-```json
-{
-  "policy_name": "fileserve",
-  "container_name": "fileserve",
-  "entrypoint": ["/usr/bin/python3"],
-  "allow_network": true,
-  "allow_pid": false,
-  "allow_execmem": false,
-  "allow_mount": false
-}
+su - userB
+cat /data/userB.txt  # OK
+cat /data/userA.txt  # Permission denied (attendu)
 ```
 
 ---
 
-### Phase 9 — Tester avec la nouvelle politique
+### Phase 6 — Application concrète avec votre service
 
 **Question :**
-Redémarrez le conteneur avec le domaine SELinux généré (`fileserve_t`) et observez le résultat.
+Configurez `fileserve` pour fonctionner selon le même principe :
+
+* L’instance lancée par `userA` ne doit lire que les fichiers `s0:c0`
+* Celle de `userB` que les `s0:c1`
+
+**Correction :**
+Il faut :
+
+* S’assurer que les processus ont un contexte `s0:c0` ou `s0:c1`
+* Les fichiers servis doivent être labellisés avec le bon range
+
+```bash
+runcon -r system_r -t user_t -l s0:c0 ./fileserve  # pour userA
+runcon -r system_r -t user_t -l s0:c1 ./fileserve  # pour userB
+```
+
+Labellisez les fichiers correctement :
+
+```bash
+chcon --range=s0:c0 /data/userA-files/*
+chcon --range=s0:c1 /data/userB-files/*
+```
+
+---
+
+### Étape bonus — Multi catégories
+
+**Question :**
+Attribuez à un utilisateur les deux catégories `c0,c1`, testez qu’il peut lire les deux fichiers.
 
 **Correction :**
 
 ```bash
-podman run --rm --security-opt label=type:fileserve_t ...
+sudo semanage login -a -s user_u -r s0-s0:c0,c1 userAdmin
+runcon -r system_r -t user_t -l s0:c0,c1 ./fileserve
 ```

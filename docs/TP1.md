@@ -72,6 +72,7 @@ Retrouvez ces blocages dans les logs du système de différentes manières et id
 
 ??? Note "Commandes"
     ```bash
+    less /var/log/audit/audit.log
     ausearch -m AVC -ts recent
     ```
 

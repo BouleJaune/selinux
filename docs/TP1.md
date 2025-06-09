@@ -52,16 +52,36 @@ Lister les contextes de : fichiers, processes, ports, utilisateur...
 
 #### Mise en place d’un blocage SELinux volontaire
 
-Faites en sorte d'utiliser le binaire ``bash`` de manière non-standard, par exemple en le copiant, pour générer un blocage.
-Passez ensuite en ``permissive`` pour la suite et bien voir que c'est SELinux qui bloque.
+Nous allons créer un service systemd qui exécute un script simple pour générer des erreurs SELinux.
 
-??? Note "Commandes"
-    ```bash
-    mkdir /srv/testselinux
-    cp /bin/bash /srv/testselinux/bash
-    chmod +x /srv/testselinux/bash
-    /srv/testselinux/bash
-    ```
+Le script: 
+```bash
+echo '#! /bin/bash' > ~/script.sh
+echo 'echo "Run OK" >> /tmp/log.txt' >> ~/script.sh
+chmod +x ~/script.sh
+```
+
+Le service:
+```bash
+cat <<EOF | sudo tee /etc/systemd/system/myscript.service
+[Unit]
+Description=Test SELinux Script
+
+[Service]
+ExecStart=/root/script.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+Activation du service:
+```bash
+systemctl daemon-reload
+systemctl start myscript.service
+```
+
+Le service devrait être bloqué par SELinux.
 
 ### Analyse des messages AVC
 
@@ -76,10 +96,25 @@ Retrouvez ces blocages dans les logs du système de différentes manières et id
     ausearch -m AVC -ts recent
     ```
 
+### Réitérer en ``Permissive``
+
+Relancez le service en ``Permissive`` et observez les erreurs.
+??? Note "Commandes"
+    ```bash
+    setenforce 0 # Met en permissive
+    systemctl restart myscript.service
+    cat /tmp/log.txt # Observez que le script s'éxécute bien maintenant
+    ausearch -m AVC -ts recent # De multiples erreurs sont visibles
+    ```
+
+??? Note "Les différentes erreurs visibles en Permissive"
+    Il y a maintenant plusieurs erreurs visibles dans les logs car le script ne s'arrête pas à la première en Permissive.
+
+    On peut voir les diverses erreurs AVC, néanmoins c'est peu lisible.
 
 #### Interface plus simple : sealert
 
-Essayez de lire les suggestions de résolution. Vérifiez que le service `setroubleshootd` est actif si la commande ne retourne rien.
+Utilisez SELinux pour avoir une vue plus lisible des erreurs en Permissive
 
 ??? Note "Commandes"
     ```bash
@@ -88,12 +123,32 @@ Essayez de lire les suggestions de résolution. Vérifiez que le service `setrou
 
 ### Correction du problème
 
-Restaurez le bon contexte pour débloquer le binaire.
+Un script éxécuté par un service est en général dans le dossier ``/usr/bin``, utilisez cette information pour trouver quel contexte mettre à ``script.sh`` et corriger le problème. 
 
-??? Note "Commandes"
+
+??? Note "Solution"
     ```bash
-    restorecon -Rv /srv/testselinux
+    # Observer le contexte des fichiers /usr/bin 
+    ls -lZ /usr/bin | awk 'NR>0 { print $5}' | sort | uniq -c | sort -k1 -n -r | head 
+    # Le type d'un binaire est bin_t, assignons le à myscript.sh
+    chcon -t bin_t /root/myscript.sh
+    systemctl restart myscript # Fonctionne !
     ```
+    Vous pouvez voir ce que ``bin_t`` peut faire avec ``sesearch -s bin_t -A``
+
+    ```bash
+    allow bin_t bin_t:dir { getattr open search };
+    allow bin_t bin_t:filesystem associate;
+    allow bin_t bin_t:lnk_file { getattr read };
+    allow bin_t device_t:filesystem associate;
+    allow file_type fs_t:filesystem associate;
+    allow file_type hugetlbfs_t:filesystem associate;
+    allow file_type noxattrfs:filesystem associate;
+    allow file_type tmp_t:filesystem associate;
+    allow file_type tmpfs_t:filesystem associate;
+    ```
+    Cela se lit par exemple : Autorise à ``bin_t`` de { getattr open search } dans les dossiers de type ``bin_t`` (première ligne)
+
 
 ## Flask — Partie 1
 

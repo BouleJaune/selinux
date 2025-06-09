@@ -6,37 +6,50 @@ Corriger un blocage SELinux causé par un mauvais contexte sur un répertoire pe
 
 ### Étapes
 
-#### Installer Apache
+#### Installation d'Apache
 
-```bash
-sudo dnf install -y httpd
-sudo systemctl enable --now httpd
-```
+Installez Apache et accéder à un petit fichier depuis un navigateur internet.
+
+??? Note "Solution"
+        Installation d'apache et création d'un index.html
+        ```bash
+        dnf install -y httpd
+        systemctl enable --now httpd
+        echo "Coucou" > /var/www/html/index.html
+        ```
+        Ouverture dans le firewall !
+        ```bash
+        firewall-cmd --add-service=http --permanent
+        firewall-cmd --reload
+        ```
 
 #### Créer un dossier personnalisé
 
-```bash
-sudo mkdir /webdata
-echo "SELinux TP" | sudo tee /webdata/index.html
-sudo chmod -R 755 /webdata
-```
+Mettez les fichiers du serveur web dans un dossier personnalisé ce qui entrainera un blocage.
 
-#### Modifier la configuration Apache
+??? Note "Solution"
+        Création d'un dossier avec un fichier index.html
+        ```bash
+        mkdir /webdata
+        echo "Coucou" > /webdata/index.html
+        ```
+        # Modifier la configuration Apache
 
-```bash
-sudo cp /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/tp.conf
-sudo sed -i 's|/var/www/html|/webdata|' /etc/httpd/conf.d/tp.conf
-sudo systemctl restart httpd
-```
+        ```bash
+        cp /etc/httpd/conf/httpd.conf /tmp/httpd.conf.old
+        sed -i 's|/var/www/html|/webdata|g' /etc/httpd/conf/httpd.conf
+        sed -i 's|IncludeOptional|#IncludeOptional|g' /etc/httpd/conf/httpd.conf
+        systemctl restart httpd
+        ```
 
-Accédez à `http://localhost` et notez l'erreur 403 provoquée par SELinux.
+
+Accédez à `http://localhost` et notez l'erreur provoquée par SELinux.
 
 #### Vérifier le contexte SELinux
 
 ```bash
 ls -Zd /webdata
 ```
-
 Le contexte est incorrect (`default_t`), ce qui empêche Apache d'accéder aux fichiers.
 
 #### Corriger avec `semanage` et `restorecon`

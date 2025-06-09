@@ -1,0 +1,1250 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../TP4/">
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>SELinux et conteneurs - SELinux</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+  
+  
+  
+  
+  <style>:root{--md-annotation-icon:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M12%209.5A2.5%202.5%200%200%200%209.5%2012a2.5%202.5%200%200%200%202.5%202.5%202.5%202.5%200%200%200%202.5-2.5A2.5%202.5%200%200%200%2012%209.5m0%203.5a1%201%200%200%201-1-1%201%201%200%200%201%201-1%201%201%200%200%201%201%201%201%201%200%200%201-1%201m0-3.5A2.5%202.5%200%200%200%209.5%2012a2.5%202.5%200%200%200%202.5%202.5%202.5%202.5%200%200%200%202.5-2.5A2.5%202.5%200%200%200%2012%209.5m0%203.5a1%201%200%200%201-1-1%201%201%200%200%201%201-1%201%201%200%200%201%201%201%201%201%200%200%201-1%201m0-11A10%2010%200%200%200%202%2012a10%2010%200%200%200%2010%2010%2010%2010%200%200%200%2010-10A10%2010%200%200%200%2012%202m0%2014c-2.63%200-5-1.57-6-4a6.505%206.505%200%200%201%208.5-3.5A6.52%206.52%200%200%201%2018%2012c-1%202.43-3.37%204-6%204m0-6.5A2.5%202.5%200%200%200%209.5%2012a2.5%202.5%200%200%200%202.5%202.5%202.5%202.5%200%200%200%202.5-2.5A2.5%202.5%200%200%200%2012%209.5m0%203.5a1%201%200%200%201-1-1%201%201%200%200%201%201-1%201%201%200%200%201%201%201%201%201%200%200%201-1%201%22/%3E%3C/svg%3E');}</style>
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+      
+        <meta  property="og:type"  content="website" >
+      
+        <meta  property="og:title"  content="SELinux et conteneurs - SELinux" >
+      
+        <meta  property="og:description"  content="None" >
+      
+        <meta  property="og:image"  content="./assets/images/social/TP5.png" >
+      
+        <meta  property="og:image:type"  content="image/png" >
+      
+        <meta  property="og:image:width"  content="1200" >
+      
+        <meta  property="og:image:height"  content="630" >
+      
+        <meta  property="og:url"  content="None" >
+      
+        <meta  name="twitter:card"  content="summary_large_image" >
+      
+        <meta  name="twitter:title"  content="SELinux et conteneurs - SELinux" >
+      
+        <meta  name="twitter:description"  content="None" >
+      
+        <meta  name="twitter:image"  content="./assets/images/social/TP5.png" >
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="cyan" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#conteneurs-podman-en-rootless" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href=".." title="SELinux" class="md-header__button md-logo" aria-label="SELinux" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SELinux
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              SELinux et conteneurs
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="SELinux" class="md-nav__button md-logo" aria-label="SELinux" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    SELinux
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Programme
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TP1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction et troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TP2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestion de la politique SELinux
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TP3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Création de module custom
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TP4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MLS/MCS
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    SELinux et conteneurs
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    SELinux et conteneurs
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#conteneurs-podman-en-rootless" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conteneurs Podman en rootless
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conteneurs Podman en rootless">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectifs-pedagogiques" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectifs pédagogiques
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pre-requis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pré-requis
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mise-en-place-de-lenvironnement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mise en place de l’environnement
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lancement-dun-conteneur-de-base" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lancement d’un conteneur de base
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#montage-dun-volume-sans-option-de-label" class="md-nav__link">
+    <span class="md-ellipsis">
+      Montage d’un volume sans option de label
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-resolution-avec-les-labels-de-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Résolution avec les labels de volumes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-suppression-manuelle-des-contextes" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Suppression manuelle des contextes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-nettoyage" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Nettoyage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1rm-rf-html" class="md-nav__link">
+    <span class="md-ellipsis">
+      1rm -rf ./html
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1rm -rf ./html">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creation-dune-politique-personnalisee-avec-udica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Création d’une politique personnalisée avec Udica
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nettoyage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nettoyage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#questions-bonus" class="md-nav__link">
+    <span class="md-ellipsis">
+      Questions bonus
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flask-selinux-et-conteneurs-podman-rootless" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flask — SELinux et conteneurs (Podman rootless)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Flask — SELinux et conteneurs (Podman rootless)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectif-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectif général
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-conteneurisation-simple-de-fileserve" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 1 — Conteneurisation simple de fileserve
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-activation-de-selinux-dans-les-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 2 — Activation de SELinux dans les volumes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-corriger-avec-z-ou-z" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 3 — Corriger avec :Z ou :z
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4-inspection-des-contextes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 4 — Inspection des contextes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-5-verifier-le-contexte-du-conteneur-lui-meme" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 5 — Vérifier le contexte du conteneur lui-même
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-6-empecher-lacces-a-dautres-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 6 — Empêcher l'accès à d'autres volumes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-politique-selinux-specifique-via-security-opt" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 7 — Politique SELinux spécifique via --security-opt
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-generation-dune-politique-personnalisee-avec-udica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 8 — Génération d’une politique personnalisée avec udica
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-9-tester-avec-la-nouvelle-politique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 9 — Tester avec la nouvelle politique
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#conteneurs-podman-en-rootless" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conteneurs Podman en rootless
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conteneurs Podman en rootless">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectifs-pedagogiques" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectifs pédagogiques
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pre-requis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pré-requis
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mise-en-place-de-lenvironnement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mise en place de l’environnement
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lancement-dun-conteneur-de-base" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lancement d’un conteneur de base
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#montage-dun-volume-sans-option-de-label" class="md-nav__link">
+    <span class="md-ellipsis">
+      Montage d’un volume sans option de label
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-resolution-avec-les-labels-de-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Résolution avec les labels de volumes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-suppression-manuelle-des-contextes" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Suppression manuelle des contextes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-nettoyage" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Nettoyage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1rm-rf-html" class="md-nav__link">
+    <span class="md-ellipsis">
+      1rm -rf ./html
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1rm -rf ./html">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creation-dune-politique-personnalisee-avec-udica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Création d’une politique personnalisée avec Udica
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nettoyage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nettoyage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#questions-bonus" class="md-nav__link">
+    <span class="md-ellipsis">
+      Questions bonus
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flask-selinux-et-conteneurs-podman-rootless" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flask — SELinux et conteneurs (Podman rootless)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Flask — SELinux et conteneurs (Podman rootless)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectif-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectif général
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-conteneurisation-simple-de-fileserve" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 1 — Conteneurisation simple de fileserve
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-activation-de-selinux-dans-les-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 2 — Activation de SELinux dans les volumes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-corriger-avec-z-ou-z" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 3 — Corriger avec :Z ou :z
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4-inspection-des-contextes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 4 — Inspection des contextes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-5-verifier-le-contexte-du-conteneur-lui-meme" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 5 — Vérifier le contexte du conteneur lui-même
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-6-empecher-lacces-a-dautres-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 6 — Empêcher l'accès à d'autres volumes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-politique-selinux-specifique-via-security-opt" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 7 — Politique SELinux spécifique via --security-opt
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-generation-dune-politique-personnalisee-avec-udica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 8 — Génération d’une politique personnalisée avec udica
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-9-tester-avec-la-nouvelle-politique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 9 — Tester avec la nouvelle politique
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>SELinux et conteneurs</h1>
+
+<h2 id="conteneurs-podman-en-rootless">Conteneurs Podman en rootless</h2>
+<h3 id="objectifs-pedagogiques">Objectifs pédagogiques</h3>
+<ul>
+<li>Comprendre comment SELinux isole les conteneurs en mode rootless.</li>
+<li>Manipuler les options <code>:z</code>, <code>:Z</code>, <code>--security-opt</code> dans Podman.</li>
+<li>Observer les contextes des processus et volumes dans l’environnement utilisateur.</li>
+<li>Expérimenter avec des politiques personnalisées (Udica).</li>
+</ul>
+<hr />
+<h3 id="pre-requis">Pré-requis</h3>
+<ul>
+<li>Fedora ou RHEL avec Podman installé (<code>dnf install podman udica -y</code>)</li>
+<li>SELinux activé (<code>getenforce</code> doit retourner <code>Enforcing</code>)</li>
+<li>Utilisateur non-root avec droits sudo</li>
+<li>Accès SSH ou TTY</li>
+</ul>
+<hr />
+<h3 id="mise-en-place-de-lenvironnement">Mise en place de l’environnement</h3>
+<p>Créer un utilisateur dédié :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
+<span class="normal"><a href="#__codelineno-0-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>sudo<span class="w"> </span>useradd<span class="w"> </span>-m<span class="w"> </span>podtest
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>sudo<span class="w"> </span>passwd<span class="w"> </span>podtest
+</span></code></pre></div></td></tr></table></div>
+<p>Se connecter avec ce nouvel utilisateur :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>su<span class="w"> </span>-<span class="w"> </span>podtest
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h2 id="lancement-dun-conteneur-de-base">Lancement d’un conteneur de base</h2>
+<p>Lancez un simple conteneur rootless et observer ses paramètres SELinux.</p>
+<p><strong>Instructions</strong> :</p>
+<ul>
+<li>Connectez-vous avec un utilisateur non privilégié</li>
+<li>Lancez un conteneur simple :</li>
+</ul>
+<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a>podman<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>tp-web<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:80<span class="w"> </span>docker.io/library/nginx
+</span></code></pre></div></td></tr></table></div>
+* Observez les contextes :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a>ps<span class="w"> </span>-efZ<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>nginx
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2"></a>id<span class="w"> </span>-Z
+</span></code></pre></div></td></tr></table></div>
+<p><strong>Questions</strong> :</p>
+<ul>
+<li>Quel est le domaine SELinux du processus nginx ?</li>
+<li>Quel est le contexte SELinux de votre utilisateur ?</li>
+</ul>
+<hr />
+<h2 id="montage-dun-volume-sans-option-de-label">Montage d’un volume sans option de label</h2>
+<p><strong>But</strong> : Observer un échec lié au contexte SELinux.</p>
+<p><strong>Instructions</strong> :</p>
+<ul>
+<li>Créez un répertoire local et copiez-y un <code>index.html</code></li>
+<li>Montez ce répertoire dans <code>/usr/share/nginx/html</code> sans option :</li>
+</ul>
+<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a>podman<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:80<span class="w"> </span>-v<span class="w"> </span>./html:/usr/share/nginx/html<span class="w"> </span>nginx
+</span></code></pre></div></td></tr></table></div>
+* Ouvrez le navigateur ou faites un <code>curl localhost:8080</code></p>
+<p><strong>Question</strong> :</p>
+<ul>
+<li>L’accès fonctionne-t-il ? Si non, pourquoi ?</li>
+</ul>
+<hr />
+<h2 id="3-resolution-avec-les-labels-de-volumes">3. Résolution avec les labels de volumes</h2>
+<p><strong>But</strong> : Comprendre l’impact de <code>:z</code> et <code>:Z</code>.</p>
+<p><strong>Instructions</strong> :</p>
+<ul>
+<li>Relancez le conteneur avec l’option <code>:z</code> :</li>
+</ul>
+<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a>podman<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:80<span class="w"> </span>-v<span class="w"> </span>./html:/usr/share/nginx/html:z<span class="w"> </span>nginx
+</span></code></pre></div></td></tr></table></div>
+* Observez les contextes du répertoire :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a>ls<span class="w"> </span>-Zd<span class="w"> </span>./html
+</span></code></pre></div></td></tr></table></div>
+<p><strong>Questions</strong> :</p>
+<ul>
+<li>Quelle est la différence entre <code>:z</code> et <code>:Z</code> ?</li>
+<li>Pourquoi <code>:z</code> fonctionne dans ce cas ?</li>
+</ul>
+<hr />
+<h2 id="4-suppression-manuelle-des-contextes">4. Suppression manuelle des contextes</h2>
+<p><strong>But</strong> : Forcer un blocage et observer un AVC.</p>
+<p><strong>Instructions</strong> :</p>
+<ul>
+<li>Supprimez le label :</li>
+</ul>
+<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a>chcon<span class="w"> </span>-t<span class="w"> </span>etc_t<span class="w"> </span>./html
+</span></code></pre></div></td></tr></table></div>
+* Relancez le conteneur avec le volume.
+* Observez :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1"></a>journalctl<span class="w"> </span>-xe<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>AVC
+</span></code></pre></div></td></tr></table></div>
+<p><strong>Question</strong> :</p>
+<ul>
+<li>Que dit le message AVC ?</li>
+<li>Quelle commande permettrait de restaurer le bon contexte ?</li>
+</ul>
+<hr />
+<h2 id="5-nettoyage">5. Nettoyage</h2>
+<ul>
+<li>Supprimez tous les conteneurs :</li>
+</ul>
+<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1"></a>podman<span class="w"> </span>rm<span class="w"> </span>-a<span class="w"> </span>-f
+</span></code></pre></div></td></tr></table></div>
+* Supprimez le répertoire si besoin :</p>
+<h2 id="1rm-rf-html"><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1"></a>rm<span class="w"> </span>-rf<span class="w"> </span>./html
+</span></code></pre></div></td></tr></table></div></h2>
+<h3 id="creation-dune-politique-personnalisee-avec-udica">Création d’une politique personnalisée avec Udica</h3>
+<p>Générer le JSON de profil :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1"></a>podman<span class="w"> </span>generate<span class="w"> </span>systemd<span class="w"> </span>--name<span class="w"> </span>secure-nginx<span class="w"> </span>&gt;<span class="w"> </span>podman-secure.service
+</span></code></pre></div></td></tr></table></div>
+<p>Créer une politique personnalisée :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1"></a>udica<span class="w"> </span>secure-nginx
+</span></code></pre></div></td></tr></table></div>
+<p>Installer le module généré :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1"></a>sudo<span class="w"> </span>semodule<span class="w"> </span>-i<span class="w"> </span>secure-nginx.cil
+</span></code></pre></div></td></tr></table></div>
+<p>Relancer le conteneur avec le nouveau label :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-14-1">1</a></span>
+<span class="normal"><a href="#__codelineno-14-2">2</a></span>
+<span class="normal"><a href="#__codelineno-14-3">3</a></span>
+<span class="normal"><a href="#__codelineno-14-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>nginx-udica<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2"></a><span class="w">  </span>--security-opt<span class="w"> </span><span class="nv">label</span><span class="o">=</span>type:secure_nginx.process<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3"></a><span class="w">  </span>-v<span class="w"> </span>~/nginx_data:/usr/share/nginx/html:ro,Z<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4"></a><span class="w">  </span>-p<span class="w"> </span><span class="m">8085</span>:80<span class="w"> </span>nginx
+</span></code></pre></div></td></tr></table></div>
+<p>Vérifier :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-15-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1"></a>ps<span class="w"> </span>-eZ<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>nginx
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h3 id="nettoyage">Nettoyage</h3>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-16-1">1</a></span>
+<span class="normal"><a href="#__codelineno-16-2">2</a></span>
+<span class="normal"><a href="#__codelineno-16-3">3</a></span>
+<span class="normal"><a href="#__codelineno-16-4">4</a></span>
+<span class="normal"><a href="#__codelineno-16-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1"></a>podman<span class="w"> </span>stop<span class="w"> </span>-a
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2"></a>podman<span class="w"> </span>rm<span class="w"> </span>-a
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3"></a>podman<span class="w"> </span>rmi<span class="w"> </span>nginx
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4"></a>sudo<span class="w"> </span>semodule<span class="w"> </span>-r<span class="w"> </span>secure-nginx
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5"></a>rm<span class="w"> </span>-rf<span class="w"> </span>~/nginx_data<span class="w"> </span>podman-secure.service
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h3 id="questions-bonus">Questions bonus</h3>
+<ul>
+<li>Pourquoi <code>:Z</code> est risqué à utiliser sur des fichiers partagés ?</li>
+<li>Peut-on utiliser <code>Udica</code> avec Docker ?</li>
+<li>Que permet de faire <code>--security-opt label=disable</code> et dans quels cas est-ce utile ?</li>
+</ul>
+<h2 id="flask-selinux-et-conteneurs-podman-rootless">Flask — SELinux et conteneurs (Podman rootless)</h2>
+<h3 id="objectif-general">Objectif général</h3>
+<p>L'application <code>fileserve</code> développée précédemment doit désormais être conteneurisée avec Podman en <strong>mode rootless</strong>.</p>
+<p>Vous devez vous assurer que :</p>
+<ul>
+<li>Le conteneur tourne avec les bons contextes SELinux</li>
+<li>Les volumes sont correctement montés et accessibles</li>
+<li>Les politiques SELinux empêchent toute élévation de privilèges ou sortie du périmètre</li>
+</ul>
+<hr />
+<h3 id="phase-1-conteneurisation-simple-de-fileserve">Phase 1 — Conteneurisation simple de <code>fileserve</code></h3>
+<p><strong>Question :</strong>
+Créez une image Podman contenant <code>fileserve</code>, construite depuis un <code>Dockerfile</code>. Testez le conteneur en rootless.</p>
+<p><strong>Correction :</strong></p>
+<div class="language-Dockerfile highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-17-1">1</a></span>
+<span class="normal"><a href="#__codelineno-17-2">2</a></span>
+<span class="normal"><a href="#__codelineno-17-3">3</a></span>
+<span class="normal"><a href="#__codelineno-17-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1"></a><span class="k">FROM</span><span class="w"> </span><span class="s">fedora:latest</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2"></a><span class="k">RUN</span><span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>python3
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3"></a><span class="k">COPY</span><span class="w"> </span>fileserve.py<span class="w"> </span>/usr/local/bin/fileserve
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4"></a><span class="k">ENTRYPOINT</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;python3&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;/usr/local/bin/fileserve&quot;</span><span class="p">]</span>
+</span></code></pre></div></td></tr></table></div>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-18-1">1</a></span>
+<span class="normal"><a href="#__codelineno-18-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1"></a>podman<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>fileserve<span class="w"> </span>.
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>localhost/fileserve
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h3 id="phase-2-activation-de-selinux-dans-les-volumes">Phase 2 — Activation de SELinux dans les volumes</h3>
+<p><strong>Question :</strong>
+Montez un volume <code>/srv/files</code> contenant des documents. Quel comportement observe-t-on sans options <code>:z</code> ou <code>:Z</code> ?</p>
+<p><strong>Correction :</strong></p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-19-1">1</a></span>
+<span class="normal"><a href="#__codelineno-19-2">2</a></span>
+<span class="normal"><a href="#__codelineno-19-3">3</a></span>
+<span class="normal"><a href="#__codelineno-19-4">4</a></span>
+<span class="normal"><a href="#__codelineno-19-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>/srv/files
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;data&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/srv/files/test.txt
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3"></a>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span>/srv/files:/data:ro<span class="w"> </span>localhost/fileserve
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5"></a><span class="c1"># Erreur d&#39;accès probable (Permission denied)</span>
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h3 id="phase-3-corriger-avec-z-ou-z">Phase 3 — Corriger avec <code>:Z</code> ou <code>:z</code></h3>
+<p><strong>Question :</strong>
+Testez avec les deux options et expliquez la différence entre <code>:z</code> et <code>:Z</code>.</p>
+<p><strong>Correction :</strong></p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-20-1">1</a></span>
+<span class="normal"><a href="#__codelineno-20-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span>/srv/files:/data:ro,z<span class="w"> </span>localhost/fileserve
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span>/srv/files:/data:ro,Z<span class="w"> </span>localhost/fileserve
+</span></code></pre></div></td></tr></table></div>
+<ul>
+<li><code>:z</code> = partageable entre plusieurs conteneurs</li>
+<li><code>:Z</code> = usage exclusif pour ce conteneur (isolation plus forte)</li>
+</ul>
+<hr />
+<h3 id="phase-4-inspection-des-contextes">Phase 4 — Inspection des contextes</h3>
+<p><strong>Question :</strong>
+Vérifiez les contextes SELinux appliqués au volume monté.</p>
+<p><strong>Correction :</strong></p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-21-1">1</a></span>
+<span class="normal"><a href="#__codelineno-21-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1"></a>ls<span class="w"> </span>-Z<span class="w"> </span>/srv/files
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2"></a><span class="c1"># Devrait montrer un contexte du type `system_u:object_r:container_file_t:s0`</span>
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h3 id="phase-5-verifier-le-contexte-du-conteneur-lui-meme">Phase 5 — Vérifier le contexte du conteneur lui-même</h3>
+<p><strong>Question :</strong>
+Quel est le contexte SELinux du processus dans le conteneur ? Et celui du volume vu de l’intérieur ?</p>
+<p><strong>Correction :</strong></p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-22-1">1</a></span>
+<span class="normal"><a href="#__codelineno-22-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>localhost/fileserve<span class="w"> </span>id<span class="w"> </span>-Z
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>localhost/fileserve<span class="w"> </span>ls<span class="w"> </span>-Z<span class="w"> </span>/data
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h3 id="phase-6-empecher-lacces-a-dautres-volumes">Phase 6 — Empêcher l'accès à d'autres volumes</h3>
+<p><strong>Question :</strong>
+Créez un second dossier <code>/srv/private</code>, montez-le dans un second conteneur. Tentez d’y accéder depuis le premier conteneur. Est-ce autorisé ?</p>
+<p><strong>Correction :</strong>
+Si on utilise <code>:Z</code> dans les deux, la séparation fonctionne :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-23-1">1</a></span>
+<span class="normal"><a href="#__codelineno-23-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1"></a>podman<span class="w"> </span>run<span class="w"> </span>-v<span class="w"> </span>/srv/private:/private:Z<span class="w"> </span>...
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2"></a><span class="c1"># Si les deux conteneurs ont :Z, ils ne partagent pas les permissions</span>
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h3 id="phase-7-politique-selinux-specifique-via-security-opt">Phase 7 — Politique SELinux spécifique via <code>--security-opt</code></h3>
+<p><strong>Question :</strong>
+Changez le label du conteneur au runtime pour le faire fonctionner dans un autre domaine.</p>
+<p><strong>Correction :</strong></p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-24-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1"></a>podman<span class="w"> </span>run<span class="w"> </span>--security-opt<span class="w"> </span><span class="nv">label</span><span class="o">=</span>type:my_container_t<span class="w"> </span>...
+</span></code></pre></div></td></tr></table></div>
+<p>Il faut que <code>my_container_t</code> soit une catégorie ou type valide dans SELinux.</p>
+<hr />
+<h3 id="phase-8-generation-dune-politique-personnalisee-avec-udica">Phase 8 — Génération d’une politique personnalisée avec udica</h3>
+<p><strong>Question :</strong>
+Utilisez <strong>udica</strong> pour générer une politique spécifique à votre conteneur <code>fileserve</code>.</p>
+<p><strong>Correction :</strong></p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-25-1">1</a></span>
+<span class="normal"><a href="#__codelineno-25-2">2</a></span>
+<span class="normal"><a href="#__codelineno-25-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1"></a>dnf<span class="w"> </span>install<span class="w"> </span>udica
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2"></a>udica<span class="w"> </span>-j<span class="w"> </span>fileserve.json
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3"></a>semodule<span class="w"> </span>-i<span class="w"> </span>fileserve.cil
+</span></code></pre></div></td></tr></table></div>
+<p>Fichier <code>fileserve.json</code> minimal :</p>
+<div class="language-json highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-26-1">1</a></span>
+<span class="normal"><a href="#__codelineno-26-2">2</a></span>
+<span class="normal"><a href="#__codelineno-26-3">3</a></span>
+<span class="normal"><a href="#__codelineno-26-4">4</a></span>
+<span class="normal"><a href="#__codelineno-26-5">5</a></span>
+<span class="normal"><a href="#__codelineno-26-6">6</a></span>
+<span class="normal"><a href="#__codelineno-26-7">7</a></span>
+<span class="normal"><a href="#__codelineno-26-8">8</a></span>
+<span class="normal"><a href="#__codelineno-26-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1"></a><span class="p">{</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2"></a><span class="w">  </span><span class="nt">&quot;policy_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fileserve&quot;</span><span class="p">,</span>
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3"></a><span class="w">  </span><span class="nt">&quot;container_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fileserve&quot;</span><span class="p">,</span>
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4"></a><span class="w">  </span><span class="nt">&quot;entrypoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;/usr/bin/python3&quot;</span><span class="p">],</span>
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5"></a><span class="w">  </span><span class="nt">&quot;allow_network&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-26-6"><a id="__codelineno-26-6" name="__codelineno-26-6"></a><span class="w">  </span><span class="nt">&quot;allow_pid&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-26-7"><a id="__codelineno-26-7" name="__codelineno-26-7"></a><span class="w">  </span><span class="nt">&quot;allow_execmem&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-26-8"><a id="__codelineno-26-8" name="__codelineno-26-8"></a><span class="w">  </span><span class="nt">&quot;allow_mount&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+</span><span id="__span-26-9"><a id="__codelineno-26-9" name="__codelineno-26-9"></a><span class="p">}</span>
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h3 id="phase-9-tester-avec-la-nouvelle-politique">Phase 9 — Tester avec la nouvelle politique</h3>
+<p><strong>Question :</strong>
+Redémarrez le conteneur avec le domaine SELinux généré (<code>fileserve_t</code>) et observez le résultat.</p>
+<p><strong>Correction :</strong></p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-27-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--security-opt<span class="w"> </span><span class="nv">label</span><span class="o">=</span>type:fileserve_t<span class="w"> </span>...
+</span></code></pre></div></td></tr></table></div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["content.action.edit", "search.highlight", "search.suggest", "navigation.top", "content.code.copy"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+    
+  </body>
+</html>

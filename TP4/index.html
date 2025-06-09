@@ -12,13 +12,15 @@
         <link rel="prev" href="../TP3/">
       
       
+        <link rel="next" href="../TP5/">
+      
       
       <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
     
     
       
-        <title>SELinux et conteneurs - SELinux</title>
+        <title>MLS/MCS - SELinux</title>
       
     
     
@@ -61,7 +63,7 @@
       
         <meta  property="og:type"  content="website" >
       
-        <meta  property="og:title"  content="SELinux et conteneurs - SELinux" >
+        <meta  property="og:title"  content="MLS/MCS - SELinux" >
       
         <meta  property="og:description"  content="None" >
       
@@ -77,7 +79,7 @@
       
         <meta  name="twitter:card"  content="summary_large_image" >
       
-        <meta  name="twitter:title"  content="SELinux et conteneurs - SELinux" >
+        <meta  name="twitter:title"  content="MLS/MCS - SELinux" >
       
         <meta  name="twitter:description"  content="None" >
       
@@ -102,7 +104,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#tp-selinux-conteneurs-podman-en-rootless" class="md-skip">
+        <a href="#multi-level-security-mls-multi-category-security-mcs" class="md-skip">
           Aller au contenu
         </a>
       
@@ -138,7 +140,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SELinux et conteneurs
+              MLS/MCS
             
           </span>
         </div>
@@ -307,7 +309,7 @@
   
   
   <span class="md-ellipsis">
-    MLS/MCS
+    Création de module custom
     
   </span>
   
@@ -330,15 +332,13 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
-        
-      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
           
   
   
   <span class="md-ellipsis">
-    SELinux et conteneurs
+    MLS/MCS
     
   </span>
   
@@ -351,7 +351,7 @@
   
   
   <span class="md-ellipsis">
-    SELinux et conteneurs
+    MLS/MCS
     
   </span>
   
@@ -364,8 +364,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -374,6 +372,16 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#multi-level-security-mls-multi-category-security-mcs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-Level Security (MLS) &amp; Multi-Category Security (MCS)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi-Level Security (MLS) &amp; Multi-Category Security (MCS)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#objectifs-pedagogiques" class="md-nav__link">
     <span class="md-ellipsis">
       Objectifs pédagogiques
@@ -381,8 +389,8 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#pre-requis" class="md-nav__link">
     <span class="md-ellipsis">
       Pré-requis
@@ -390,71 +398,92 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#mise-en-place-de-lenvironnement" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#contexte-du-tp" class="md-nav__link">
     <span class="md-ellipsis">
-      Mise en place de l’environnement
+      Contexte du TP
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#lancer-un-conteneur-simple-rootless" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#creation-dun-environnement-controle" class="md-nav__link">
     <span class="md-ellipsis">
-      Lancer un conteneur simple (rootless)
+      Création d’un environnement contrôlé
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Création d’un environnement contrôlé">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creation-des-utilisateurs-linux-et-selinux" class="md-nav__link">
+    <span class="md-ellipsis">
+      Création des utilisateurs Linux et SELinux
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#test-de-montage-de-volume-sans-option-de-relabel" class="md-nav__link">
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manipulation-de-fichiers-avec-contexte-mcs" class="md-nav__link">
     <span class="md-ellipsis">
-      Test de montage de volume sans option de relabel
+      Manipulation de fichiers avec contexte MCS
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Manipulation de fichiers avec contexte MCS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test-de-lecture-croisee" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test de lecture croisée
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#resolution-via-z-et-z" class="md-nav__link">
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changement-de-contexte-de-processus-utilisateur" class="md-nav__link">
     <span class="md-ellipsis">
-      Résolution via :z et :Z
+      Changement de contexte de processus utilisateur
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#observation-du-contexte-reseau" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#utilisation-avancee-plages-mls" class="md-nav__link">
     <span class="md-ellipsis">
-      Observation du contexte réseau
+      Utilisation avancée : plages MLS
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#utilisation-de-security-opt-label" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#question-bonus" class="md-nav__link">
     <span class="md-ellipsis">
-      Utilisation de --security-opt label=...
+      Question bonus
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#creation-dune-politique-personnalisee-avec-udica" class="md-nav__link">
-    <span class="md-ellipsis">
-      Création d’une politique personnalisée avec Udica
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#nettoyage" class="md-nav__link">
     <span class="md-ellipsis">
       Nettoyage
@@ -462,13 +491,105 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#questions-bonus" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#aller-plus-loin" class="md-nav__link">
     <span class="md-ellipsis">
-      Questions bonus
+      Aller plus loin
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flask-selinux-mcsmls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flask — SELinux &amp; MCS/MLS
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Flask — SELinux &amp; MCS/MLS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectif-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectif général
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-activer-la-politique-mls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 1 — Activer la politique MLS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-verifier-les-niveaux-de-securite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 2 — Vérifier les niveaux de sécurité
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-attribuer-des-niveaux-de-confidentialite-a-des-utilisateurs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 3 — Attribuer des niveaux de confidentialité à des utilisateurs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4-creer-des-fichiers-etiquetes-par-niveau" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 4 — Créer des fichiers étiquetés par niveau
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-5-verification-des-acces" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 5 — Vérification des accès
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-6-application-concrete-avec-votre-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 6 — Application concrète avec votre service
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-bonus-multi-categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Étape bonus — Multi catégories
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -476,6 +597,28 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TP5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SELinux et conteneurs
+    
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -497,8 +640,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -507,6 +648,16 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#multi-level-security-mls-multi-category-security-mcs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-Level Security (MLS) &amp; Multi-Category Security (MCS)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi-Level Security (MLS) &amp; Multi-Category Security (MCS)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#objectifs-pedagogiques" class="md-nav__link">
     <span class="md-ellipsis">
       Objectifs pédagogiques
@@ -514,8 +665,8 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#pre-requis" class="md-nav__link">
     <span class="md-ellipsis">
       Pré-requis
@@ -523,71 +674,92 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#mise-en-place-de-lenvironnement" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#contexte-du-tp" class="md-nav__link">
     <span class="md-ellipsis">
-      Mise en place de l’environnement
+      Contexte du TP
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#lancer-un-conteneur-simple-rootless" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#creation-dun-environnement-controle" class="md-nav__link">
     <span class="md-ellipsis">
-      Lancer un conteneur simple (rootless)
+      Création d’un environnement contrôlé
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Création d’un environnement contrôlé">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creation-des-utilisateurs-linux-et-selinux" class="md-nav__link">
+    <span class="md-ellipsis">
+      Création des utilisateurs Linux et SELinux
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#test-de-montage-de-volume-sans-option-de-relabel" class="md-nav__link">
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manipulation-de-fichiers-avec-contexte-mcs" class="md-nav__link">
     <span class="md-ellipsis">
-      Test de montage de volume sans option de relabel
+      Manipulation de fichiers avec contexte MCS
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Manipulation de fichiers avec contexte MCS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test-de-lecture-croisee" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test de lecture croisée
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#resolution-via-z-et-z" class="md-nav__link">
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changement-de-contexte-de-processus-utilisateur" class="md-nav__link">
     <span class="md-ellipsis">
-      Résolution via :z et :Z
+      Changement de contexte de processus utilisateur
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#observation-du-contexte-reseau" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#utilisation-avancee-plages-mls" class="md-nav__link">
     <span class="md-ellipsis">
-      Observation du contexte réseau
+      Utilisation avancée : plages MLS
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#utilisation-de-security-opt-label" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#question-bonus" class="md-nav__link">
     <span class="md-ellipsis">
-      Utilisation de --security-opt label=...
+      Question bonus
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#creation-dune-politique-personnalisee-avec-udica" class="md-nav__link">
-    <span class="md-ellipsis">
-      Création d’une politique personnalisée avec Udica
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#nettoyage" class="md-nav__link">
     <span class="md-ellipsis">
       Nettoyage
@@ -595,13 +767,105 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#questions-bonus" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#aller-plus-loin" class="md-nav__link">
     <span class="md-ellipsis">
-      Questions bonus
+      Aller plus loin
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flask-selinux-mcsmls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flask — SELinux &amp; MCS/MLS
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Flask — SELinux &amp; MCS/MLS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectif-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectif général
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-activer-la-politique-mls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 1 — Activer la politique MLS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-verifier-les-niveaux-de-securite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 2 — Vérifier les niveaux de sécurité
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-attribuer-des-niveaux-de-confidentialite-a-des-utilisateurs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 3 — Attribuer des niveaux de confidentialité à des utilisateurs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4-creer-des-fichiers-etiquetes-par-niveau" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 4 — Créer des fichiers étiquetés par niveau
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-5-verification-des-acces" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 5 — Vérification des accès
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-6-application-concrete-avec-votre-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 6 — Application concrète avec votre service
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-bonus-multi-categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Étape bonus — Multi catégories
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -621,131 +885,226 @@
 
 
 
-<h1 id="tp-selinux-conteneurs-podman-en-rootless">TP SELinux – Conteneurs Podman en rootless</h1>
-<h2 id="objectifs-pedagogiques">Objectifs pédagogiques</h2>
+  <h1>MLS/MCS</h1>
+
+<h2 id="multi-level-security-mls-multi-category-security-mcs">Multi-Level Security (MLS) &amp; Multi-Category Security (MCS)</h2>
+<h3 id="objectifs-pedagogiques">Objectifs pédagogiques</h3>
 <ul>
-<li>Comprendre comment SELinux isole les conteneurs en mode rootless.</li>
-<li>Manipuler les options <code>:z</code>, <code>:Z</code>, <code>--security-opt</code> dans Podman.</li>
-<li>Observer les contextes des processus et volumes dans l’environnement utilisateur.</li>
-<li>Expérimenter avec des politiques personnalisées (Udica).</li>
+<li>Comprendre les principes de MLS et MCS dans SELinux.</li>
+<li>Manipuler les niveaux (<code>s0</code>, <code>s1</code>, etc.) et les catégories (<code>c0</code>, <code>c1</code>, etc.).</li>
+<li>Mettre en œuvre un isolement de données basé sur les niveaux et catégories.</li>
+<li>Gérer les utilisateurs SELinux avec des plages MLS/MCS définies.</li>
 </ul>
 <hr />
-<h2 id="pre-requis">Pré-requis</h2>
+<h3 id="pre-requis">Pré-requis</h3>
 <ul>
-<li>Fedora ou RHEL avec Podman installé (<code>dnf install podman udica -y</code>)</li>
-<li>SELinux activé (<code>getenforce</code> doit retourner <code>Enforcing</code>)</li>
-<li>Utilisateur non-root avec droits sudo</li>
-<li>Accès SSH ou TTY</li>
+<li>SELinux activé en mode <code>enforcing</code>.</li>
+<li>Politique <code>mls</code> ou <code>targeted</code> avec MCS (selon la distribution).</li>
+<li>Utiliser une machine Fedora ou RHEL avec le support de MLS/MCS (ex. : <code>mls</code> activé via <code>/etc/selinux/config</code>).</li>
+<li>Avoir le paquet <code>policycoreutils</code>, <code>mcstrans</code>, <code>setools-console</code> installé.</li>
 </ul>
 <hr />
-<h2 id="mise-en-place-de-lenvironnement">Mise en place de l’environnement</h2>
-<p>Créer un utilisateur dédié :</p>
+<h3 id="contexte-du-tp">Contexte du TP</h3>
+<p>Nous allons simuler une séparation d’informations classifiées par niveaux (MLS) et par catégories (MCS). Deux utilisateurs vont avoir des droits différents sur des fichiers en fonction de leur niveau ou de leur appartenance à des catégories.</p>
+<hr />
+<h3 id="creation-dun-environnement-controle">Création d’un environnement contrôlé</h3>
+<h4 id="creation-des-utilisateurs-linux-et-selinux">Création des utilisateurs Linux et SELinux</h4>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
-<span class="normal"><a href="#__codelineno-0-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>sudo<span class="w"> </span>useradd<span class="w"> </span>-m<span class="w"> </span>podtest
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>sudo<span class="w"> </span>passwd<span class="w"> </span>podtest
+<span class="normal"><a href="#__codelineno-0-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>useradd<span class="w"> </span>alice
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>useradd<span class="w"> </span>bob
 </span></code></pre></div></td></tr></table></div>
-<p>Se connecter avec ce nouvel utilisateur :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>su<span class="w"> </span>-<span class="w"> </span>podtest
+<p>Définir une plage MLS/MCS restreinte à chaque utilisateur :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>semanage<span class="w"> </span>user<span class="w"> </span>-a<span class="w"> </span>-R<span class="w"> </span><span class="s2">&quot;staff_r&quot;</span><span class="w"> </span>-r<span class="w"> </span><span class="s2">&quot;s0:c0&quot;</span><span class="w"> </span>mcs_alice
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a>semanage<span class="w"> </span>user<span class="w"> </span>-a<span class="w"> </span>-R<span class="w"> </span><span class="s2">&quot;staff_r&quot;</span><span class="w"> </span>-r<span class="w"> </span><span class="s2">&quot;s0:c1&quot;</span><span class="w"> </span>mcs_bob
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a>semanage<span class="w"> </span>login<span class="w"> </span>-a<span class="w"> </span>-s<span class="w"> </span>mcs_alice<span class="w"> </span>alice
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a>semanage<span class="w"> </span>login<span class="w"> </span>-a<span class="w"> </span>-s<span class="w"> </span>mcs_bob<span class="w"> </span>bob
 </span></code></pre></div></td></tr></table></div>
-<hr />
-<h2 id="lancer-un-conteneur-simple-rootless">Lancer un conteneur simple (rootless)</h2>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>nginx<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:80<span class="w"> </span>docker.io/library/nginx
-</span></code></pre></div></td></tr></table></div>
-<p>Vérifier que le conteneur tourne et identifier son contexte SELinux :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a>ps<span class="w"> </span>-eZ<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>nginx
-</span></code></pre></div></td></tr></table></div>
-<p>Lister les contextes des fichiers :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a>ls<span class="w"> </span>-Z<span class="w"> </span>~/.local/share/containers/
-</span></code></pre></div></td></tr></table></div>
-<hr />
-<h2 id="test-de-montage-de-volume-sans-option-de-relabel">Test de montage de volume sans option de relabel</h2>
-<p>Créer un dossier à monter :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a>mkdir<span class="w"> </span>~/nginx_data
-</span></code></pre></div></td></tr></table></div>
-<p>Tenter un montage :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>nginx-vol<span class="w"> </span>-v<span class="w"> </span>~/nginx_data:/usr/share/nginx/html:ro<span class="w"> </span>-p<span class="w"> </span><span class="m">8081</span>:80<span class="w"> </span>nginx
-</span></code></pre></div></td></tr></table></div>
-<p>Inspecter les logs (vous devriez avoir une erreur AVC) :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a>journalctl<span class="w"> </span>--user<span class="w"> </span>-b<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>AVC
+<p>Vérification :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a>semanage<span class="w"> </span>login<span class="w"> </span>-l
 </span></code></pre></div></td></tr></table></div>
 <hr />
-<h2 id="resolution-via-z-et-z">Résolution via <code>:z</code> et <code>:Z</code></h2>
-<p>Rejouer avec <code>:z</code> :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>nginx-z<span class="w"> </span>-v<span class="w"> </span>~/nginx_data:/usr/share/nginx/html:ro,z<span class="w"> </span>-p<span class="w"> </span><span class="m">8082</span>:80<span class="w"> </span>nginx
+<h3 id="manipulation-de-fichiers-avec-contexte-mcs">Manipulation de fichiers avec contexte MCS</h3>
+<p>Créer un fichier classifié pour chaque catégorie :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span>
+<span class="normal"><a href="#__codelineno-3-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a>touch<span class="w"> </span>/tmp/data_alice<span class="w"> </span>/tmp/data_bob
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2"></a>chcon<span class="w"> </span>-t<span class="w"> </span>user_home_t<span class="w"> </span>-l<span class="w"> </span>s0:c0<span class="w"> </span>/tmp/data_alice
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3"></a>chcon<span class="w"> </span>-t<span class="w"> </span>user_home_t<span class="w"> </span>-l<span class="w"> </span>s0:c1<span class="w"> </span>/tmp/data_bob
 </span></code></pre></div></td></tr></table></div>
-<p>Puis avec <code>:Z</code> :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>nginx-Z<span class="w"> </span>-v<span class="w"> </span>~/nginx_data:/usr/share/nginx/html:ro,Z<span class="w"> </span>-p<span class="w"> </span><span class="m">8083</span>:80<span class="w"> </span>nginx
+<h4 id="test-de-lecture-croisee">Test de lecture croisée</h4>
+<p>Connectez-vous successivement en tant que <code>alice</code> et <code>bob</code>, testez l'accès à chaque fichier :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
+<span class="normal"><a href="#__codelineno-4-2">2</a></span>
+<span class="normal"><a href="#__codelineno-4-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a>su<span class="w"> </span>-<span class="w"> </span>alice
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2"></a>cat<span class="w"> </span>/tmp/data_alice
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3"></a>cat<span class="w"> </span>/tmp/data_bob
 </span></code></pre></div></td></tr></table></div>
-<p>Comparer les contextes après chaque lancement :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1"></a>ls<span class="w"> </span>-Z<span class="w"> </span>~/nginx_data
+<p>Puis :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
+<span class="normal"><a href="#__codelineno-5-2">2</a></span>
+<span class="normal"><a href="#__codelineno-5-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a>su<span class="w"> </span>-<span class="w"> </span>bob
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2"></a>cat<span class="w"> </span>/tmp/data_bob
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3"></a>cat<span class="w"> </span>/tmp/data_alice
 </span></code></pre></div></td></tr></table></div>
-<p><strong>Questions</strong> :</p>
+<p><strong>Question</strong> : Que constatez-vous ? Pourquoi ?</p>
+<hr />
+<h3 id="changement-de-contexte-de-processus-utilisateur">Changement de contexte de processus utilisateur</h3>
+<p>Observez les contextes SELinux avec :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a>id<span class="w"> </span>-Z
+</span></code></pre></div></td></tr></table></div>
+<p>Puis changez temporairement le contexte MCS d’un shell :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a>sudo<span class="w"> </span>runcon<span class="w"> </span>-l<span class="w"> </span>s0:c0<span class="w"> </span>--<span class="w"> </span>bash
+</span></code></pre></div></td></tr></table></div>
+<p>Tentez à nouveau la lecture de fichiers. Testez d'autres catégories.</p>
+<hr />
+<h3 id="utilisation-avancee-plages-mls">Utilisation avancée : plages MLS</h3>
+<p>Modifiez l'utilisateur <code>alice</code> pour qu'il ait une plage de niveaux (ex : <code>s0 - s1</code>)</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1"></a>semanage<span class="w"> </span>user<span class="w"> </span>-m<span class="w"> </span>-R<span class="w"> </span><span class="s2">&quot;staff_r&quot;</span><span class="w"> </span>-r<span class="w"> </span><span class="s2">&quot;s0 - s1:c0.c3&quot;</span><span class="w"> </span>mcs_alice
+</span></code></pre></div></td></tr></table></div>
+<p>Créez un fichier avec un niveau supérieur :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1"></a>chcon<span class="w"> </span>-t<span class="w"> </span>user_home_t<span class="w"> </span>-l<span class="w"> </span>s1<span class="w"> </span>/tmp/data_topsecret
+</span></code></pre></div></td></tr></table></div>
+<p>Testez l’accès avec <code>alice</code>. Essayez de changer de niveau avec <code>runcon</code>.</p>
+<hr />
+<h3 id="question-bonus">Question bonus</h3>
 <ul>
-<li>Quelle différence entre <code>:z</code> et <code>:Z</code> ?</li>
-<li>Dans quel cas utiliser l’un ou l’autre ?</li>
+<li>Que se passe-t-il si <code>alice</code> a accès à plusieurs catégories ? Peut-elle combiner les lectures ?</li>
+<li>Peut-on attribuer plusieurs catégories à un fichier ?</li>
+<li>Quel est l’impact de la commande <code>mcstransd</code> dans l'affichage des contextes ?</li>
 </ul>
 <hr />
-<h2 id="observation-du-contexte-reseau">Observation du contexte réseau</h2>
-<p>Lister les sockets utilisés par les conteneurs avec :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1"></a>ss<span class="w"> </span>-Ztulpn
-</span></code></pre></div></td></tr></table></div>
-<p>Ou bien :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-tulpnZ<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">808</span>
+<h3 id="nettoyage">Nettoyage</h3>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span>
+<span class="normal"><a href="#__codelineno-10-2">2</a></span>
+<span class="normal"><a href="#__codelineno-10-3">3</a></span>
+<span class="normal"><a href="#__codelineno-10-4">4</a></span>
+<span class="normal"><a href="#__codelineno-10-5">5</a></span>
+<span class="normal"><a href="#__codelineno-10-6">6</a></span>
+<span class="normal"><a href="#__codelineno-10-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1"></a>userdel<span class="w"> </span>-r<span class="w"> </span>alice
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2"></a>userdel<span class="w"> </span>-r<span class="w"> </span>bob
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3"></a>semanage<span class="w"> </span>login<span class="w"> </span>-d<span class="w"> </span>alice
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4"></a>semanage<span class="w"> </span>login<span class="w"> </span>-d<span class="w"> </span>bob
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5"></a>semanage<span class="w"> </span>user<span class="w"> </span>-d<span class="w"> </span>mcs_alice
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6"></a>semanage<span class="w"> </span>user<span class="w"> </span>-d<span class="w"> </span>mcs_bob
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7"></a>rm<span class="w"> </span>-f<span class="w"> </span>/tmp/data_alice<span class="w"> </span>/tmp/data_bob<span class="w"> </span>/tmp/data_topsecret
 </span></code></pre></div></td></tr></table></div>
 <hr />
-<h2 id="utilisation-de-security-opt-label">Utilisation de <code>--security-opt label=...</code></h2>
-<p>Créer un conteneur avec un contexte explicite :</p>
+<h3 id="aller-plus-loin">Aller plus loin</h3>
+<ul>
+<li>Créez un script de vérification automatique du niveau et des catégories autorisées d’un utilisateur.</li>
+<li>Intégrez ce mécanisme dans un environnement Podman ou systemd avec <code>selinux-label</code>.</li>
+</ul>
+<h2 id="flask-selinux-mcsmls">Flask — SELinux &amp; MCS/MLS</h2>
+<h3 id="objectif-general">Objectif général</h3>
+<p>Vous devez restreindre l’accès aux fichiers produits ou consultés par l’application <code>fileserve</code> selon des <strong>niveaux de confidentialité</strong> ou <strong>catégories</strong>.</p>
+<p>L’objectif est de simuler un système à compartiments : un utilisateur ne doit accéder qu’à ses propres documents en fonction de son niveau ou de sa catégorie (ex : équipe A vs B, ou classification Confidentiel vs Public).</p>
+<hr />
+<h3 id="phase-1-activer-la-politique-mls">Phase 1 — Activer la politique MLS</h3>
+<p><strong>Question :</strong>
+Vérifiez si la politique SELinux utilisée est bien <code>mls</code>. Sinon, modifiez-la et redémarrez.</p>
+<p><strong>Correction :</strong></p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span>
+<span class="normal"><a href="#__codelineno-11-2">2</a></span>
+<span class="normal"><a href="#__codelineno-11-3">3</a></span>
+<span class="normal"><a href="#__codelineno-11-4">4</a></span>
+<span class="normal"><a href="#__codelineno-11-5">5</a></span>
+<span class="normal"><a href="#__codelineno-11-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1"></a>sestatus<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Policy
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2"></a><span class="c1"># Pour changer (si nécessaire)</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3"></a>sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>selinux-policy-mls
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4"></a>sudo<span class="w"> </span>grubby<span class="w"> </span>--update-kernel<span class="o">=</span>ALL<span class="w"> </span>--args<span class="o">=</span><span class="s2">&quot;selinux=1 enforcing=1&quot;</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5"></a>sudo<span class="w"> </span>setsebool<span class="w"> </span>secure_mode_policyload<span class="w"> </span>on
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6"></a>sudo<span class="w"> </span>reboot
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h3 id="phase-2-verifier-les-niveaux-de-securite">Phase 2 — Vérifier les niveaux de sécurité</h3>
+<p><strong>Question :</strong>
+Quels niveaux sont définis sur votre système ? Quel est celui de votre utilisateur actuel ?</p>
+<p><strong>Correction :</strong></p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span>
+<span class="normal"><a href="#__codelineno-12-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1"></a>semanage<span class="w"> </span>user<span class="w"> </span>-l
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2"></a>id<span class="w"> </span>-Z
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h3 id="phase-3-attribuer-des-niveaux-de-confidentialite-a-des-utilisateurs">Phase 3 — Attribuer des niveaux de confidentialité à des utilisateurs</h3>
+<p><strong>Question :</strong>
+Attribuez à <code>userA</code> le niveau <code>s0:c0</code>, et à <code>userB</code> le niveau <code>s0:c1</code>.</p>
+<p><strong>Correction :</strong></p>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1">1</a></span>
-<span class="normal"><a href="#__codelineno-13-2">2</a></span>
-<span class="normal"><a href="#__codelineno-13-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>secure-nginx<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2"></a><span class="w">  </span>--security-opt<span class="w"> </span><span class="nv">label</span><span class="o">=</span>type:container_runtime_t<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3"></a><span class="w">  </span>-p<span class="w"> </span><span class="m">8084</span>:80<span class="w"> </span>nginx
+<span class="normal"><a href="#__codelineno-13-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1"></a>sudo<span class="w"> </span>semanage<span class="w"> </span>login<span class="w"> </span>-a<span class="w"> </span>-s<span class="w"> </span>user_u<span class="w"> </span>-r<span class="w"> </span>s0-s0:c0<span class="w"> </span>userA
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2"></a>sudo<span class="w"> </span>semanage<span class="w"> </span>login<span class="w"> </span>-a<span class="w"> </span>-s<span class="w"> </span>user_u<span class="w"> </span>-r<span class="w"> </span>s0-s0:c1<span class="w"> </span>userB
 </span></code></pre></div></td></tr></table></div>
-<p>Inspecter :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-14-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1"></a>ps<span class="w"> </span>-eZ<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>nginx
+<p>Vérifiez :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-14-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1"></a>semanage<span class="w"> </span>login<span class="w"> </span>-l
 </span></code></pre></div></td></tr></table></div>
 <hr />
-<h2 id="creation-dune-politique-personnalisee-avec-udica">Création d’une politique personnalisée avec Udica</h2>
-<p>Générer le JSON de profil :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-15-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1"></a>podman<span class="w"> </span>generate<span class="w"> </span>systemd<span class="w"> </span>--name<span class="w"> </span>secure-nginx<span class="w"> </span>&gt;<span class="w"> </span>podman-secure.service
-</span></code></pre></div></td></tr></table></div>
-<p>Créer une politique personnalisée :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-16-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1"></a>udica<span class="w"> </span>secure-nginx
-</span></code></pre></div></td></tr></table></div>
-<p>Installer le module généré :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-17-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1"></a>sudo<span class="w"> </span>semodule<span class="w"> </span>-i<span class="w"> </span>secure-nginx.cil
-</span></code></pre></div></td></tr></table></div>
-<p>Relancer le conteneur avec le nouveau label :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-18-1">1</a></span>
-<span class="normal"><a href="#__codelineno-18-2">2</a></span>
-<span class="normal"><a href="#__codelineno-18-3">3</a></span>
-<span class="normal"><a href="#__codelineno-18-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>nginx-udica<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2"></a><span class="w">  </span>--security-opt<span class="w"> </span><span class="nv">label</span><span class="o">=</span>type:secure_nginx.process<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3"></a><span class="w">  </span>-v<span class="w"> </span>~/nginx_data:/usr/share/nginx/html:ro,Z<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4"></a><span class="w">  </span>-p<span class="w"> </span><span class="m">8085</span>:80<span class="w"> </span>nginx
-</span></code></pre></div></td></tr></table></div>
-<p>Vérifier :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-19-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1"></a>ps<span class="w"> </span>-eZ<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>nginx
-</span></code></pre></div></td></tr></table></div>
-<hr />
-<h2 id="nettoyage">Nettoyage</h2>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-20-1">1</a></span>
-<span class="normal"><a href="#__codelineno-20-2">2</a></span>
-<span class="normal"><a href="#__codelineno-20-3">3</a></span>
-<span class="normal"><a href="#__codelineno-20-4">4</a></span>
-<span class="normal"><a href="#__codelineno-20-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1"></a>podman<span class="w"> </span>stop<span class="w"> </span>-a
-</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2"></a>podman<span class="w"> </span>rm<span class="w"> </span>-a
-</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3"></a>podman<span class="w"> </span>rmi<span class="w"> </span>nginx
-</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4"></a>sudo<span class="w"> </span>semodule<span class="w"> </span>-r<span class="w"> </span>secure-nginx
-</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5"></a>rm<span class="w"> </span>-rf<span class="w"> </span>~/nginx_data<span class="w"> </span>podman-secure.service
-</span></code></pre></div></td></tr></table></div>
-<hr />
-<h2 id="questions-bonus">Questions bonus</h2>
+<h3 id="phase-4-creer-des-fichiers-etiquetes-par-niveau">Phase 4 — Créer des fichiers étiquetés par niveau</h3>
+<p><strong>Question :</strong>
+Créez deux fichiers :</p>
 <ul>
-<li>Pourquoi <code>:Z</code> est risqué à utiliser sur des fichiers partagés ?</li>
-<li>Peut-on utiliser <code>Udica</code> avec Docker ?</li>
-<li>Que permet de faire <code>--security-opt label=disable</code> et dans quels cas est-ce utile ?</li>
+<li>Un fichier accessible uniquement par <code>userA</code> (catégorie c0)</li>
+<li>Un fichier accessible uniquement par <code>userB</code> (catégorie c1)</li>
 </ul>
+<p><strong>Correction :</strong></p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-15-1">1</a></span>
+<span class="normal"><a href="#__codelineno-15-2">2</a></span>
+<span class="normal"><a href="#__codelineno-15-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1"></a>touch<span class="w"> </span>/data/userA.txt<span class="w"> </span>/data/userB.txt
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2"></a>chcon<span class="w"> </span>--user<span class="o">=</span>user_u<span class="w"> </span>--role<span class="o">=</span>object_r<span class="w"> </span>--type<span class="o">=</span>default_t<span class="w"> </span>--range<span class="o">=</span>s0:c0<span class="w"> </span>/data/userA.txt
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3"></a>chcon<span class="w"> </span>--user<span class="o">=</span>user_u<span class="w"> </span>--role<span class="o">=</span>object_r<span class="w"> </span>--type<span class="o">=</span>default_t<span class="w"> </span>--range<span class="o">=</span>s0:c1<span class="w"> </span>/data/userB.txt
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h3 id="phase-5-verification-des-acces">Phase 5 — Vérification des accès</h3>
+<p><strong>Question :</strong>
+Connectez-vous en tant que <code>userA</code> et <code>userB</code>, testez l’accès croisé aux fichiers. Que constatez-vous ?</p>
+<p><strong>Correction :</strong></p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-16-1">1</a></span>
+<span class="normal"><a href="#__codelineno-16-2">2</a></span>
+<span class="normal"><a href="#__codelineno-16-3">3</a></span>
+<span class="normal"><a href="#__codelineno-16-4">4</a></span>
+<span class="normal"><a href="#__codelineno-16-5">5</a></span>
+<span class="normal"><a href="#__codelineno-16-6">6</a></span>
+<span class="normal"><a href="#__codelineno-16-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1"></a>su<span class="w"> </span>-<span class="w"> </span>userA
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2"></a>cat<span class="w"> </span>/data/userA.txt<span class="w">  </span><span class="c1"># OK</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3"></a>cat<span class="w"> </span>/data/userB.txt<span class="w">  </span><span class="c1"># Permission denied (attendu)</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4"></a>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5"></a>su<span class="w"> </span>-<span class="w"> </span>userB
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6"></a>cat<span class="w"> </span>/data/userB.txt<span class="w">  </span><span class="c1"># OK</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7"></a>cat<span class="w"> </span>/data/userA.txt<span class="w">  </span><span class="c1"># Permission denied (attendu)</span>
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h3 id="phase-6-application-concrete-avec-votre-service">Phase 6 — Application concrète avec votre service</h3>
+<p><strong>Question :</strong>
+Configurez <code>fileserve</code> pour fonctionner selon le même principe :</p>
+<ul>
+<li>L’instance lancée par <code>userA</code> ne doit lire que les fichiers <code>s0:c0</code></li>
+<li>Celle de <code>userB</code> que les <code>s0:c1</code></li>
+</ul>
+<p><strong>Correction :</strong>
+Il faut :</p>
+<ul>
+<li>S’assurer que les processus ont un contexte <code>s0:c0</code> ou <code>s0:c1</code></li>
+<li>Les fichiers servis doivent être labellisés avec le bon range</li>
+</ul>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-17-1">1</a></span>
+<span class="normal"><a href="#__codelineno-17-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1"></a>runcon<span class="w"> </span>-r<span class="w"> </span>system_r<span class="w"> </span>-t<span class="w"> </span>user_t<span class="w"> </span>-l<span class="w"> </span>s0:c0<span class="w"> </span>./fileserve<span class="w">  </span><span class="c1"># pour userA</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2"></a>runcon<span class="w"> </span>-r<span class="w"> </span>system_r<span class="w"> </span>-t<span class="w"> </span>user_t<span class="w"> </span>-l<span class="w"> </span>s0:c1<span class="w"> </span>./fileserve<span class="w">  </span><span class="c1"># pour userB</span>
+</span></code></pre></div></td></tr></table></div>
+<p>Labellisez les fichiers correctement :</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-18-1">1</a></span>
+<span class="normal"><a href="#__codelineno-18-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1"></a>chcon<span class="w"> </span>--range<span class="o">=</span>s0:c0<span class="w"> </span>/data/userA-files/*
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2"></a>chcon<span class="w"> </span>--range<span class="o">=</span>s0:c1<span class="w"> </span>/data/userB-files/*
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h3 id="etape-bonus-multi-categories">Étape bonus — Multi catégories</h3>
+<p><strong>Question :</strong>
+Attribuez à un utilisateur les deux catégories <code>c0,c1</code>, testez qu’il peut lire les deux fichiers.</p>
+<p><strong>Correction :</strong></p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-19-1">1</a></span>
+<span class="normal"><a href="#__codelineno-19-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1"></a>sudo<span class="w"> </span>semanage<span class="w"> </span>login<span class="w"> </span>-a<span class="w"> </span>-s<span class="w"> </span>user_u<span class="w"> </span>-r<span class="w"> </span>s0-s0:c0,c1<span class="w"> </span>userAdmin
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2"></a>runcon<span class="w"> </span>-r<span class="w"> </span>system_r<span class="w"> </span>-t<span class="w"> </span>user_t<span class="w"> </span>-l<span class="w"> </span>s0:c0,c1<span class="w"> </span>./fileserve
+</span></code></pre></div></td></tr></table></div>
 
 
 

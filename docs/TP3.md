@@ -105,24 +105,25 @@ Paquets nécessaires:
 dnf install rpmbuild sepolicy
 ```
 
-Commande pour générer une policy sur un template "standard init daemon":
+Générez avec ``sepolicy generate`` un template de module pour ``/root/script.sh`` de type "Standard Init Daemon".
 
-```bash
-mkdir new_pol && cd new_pol
-sepolicy generate --init /root/script.sh -n script
-./script.sh # Le nom est un peu mal choisi, 
-# mais ce script.sh est un nouveau fichier généré par la commande
-# Il permet d'installer la nouvelle policy
-```
+??? Note "Commandes"
+    ```bash
+    mkdir new_pol && cd new_pol
+    sepolicy generate --init /root/script.sh -n script
+    ./script.sh # Le nom est un peu mal choisi, 
+    # mais ce script.sh est un nouveau fichier généré par la commande
+    # Il permet d'installer la nouvelle policy
+    ```
 
-Cela va nous générer des types customs et une policy basique pour ce script.
+Cela va nous générer des types customs et un module basique pour ce script.
 On peut voir le contexte pour le fichier dans le ``.fc`` (File Context). Il doit être de type ``script_exec_t``.
 
 Il nous faut l'appliquer avec ``semanage fcontext -a -t script_exec_t /root/script.sh`` et ``restorecon /root/script.sh``.
 
 Une fois ceci fait on peut relancer le service.
 
-Le service fonctionne et ne retourne aucune erreur.
+Le service fonctionne et ne retourne aucune erreur. Cela est grâce à la présence de la maccro ``init_daemon_domain``.
 
 Il est important de noter que le template générer met le type ``script_t`` (celui du process) en permissive par défaut dans le ``.te``.
 

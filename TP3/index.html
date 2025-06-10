@@ -664,14 +664,18 @@ On peut ouvrir le fichier <code>.te</code> pour voir le CIL utilisé.</p>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a>semodule<span class="w"> </span>-i<span class="w"> </span>myscriptfull.pp
 </span></code></pre></div></td></tr></table></div>
 </details>
-<p>Important: ce module donne les droits au type <code>admin_home_t</code> entier ! Il vaut mieux dans un premier temps placer les choses où il faut, cela réduit les besoins de customisation de SELinux et est plus pratique pour des raisons de standardisations.</p>
-<p>Le FSHS (File System Hierarchy Standard) dit qu'un script d'administration local devrait être placé dans <code>/usr/local/bin</code>, qui est un dossier de type <code>bin_t</code> fonctionnant.  </p>
+<p><strong>Important:</strong> ce module donne les droits au type <code>admin_home_t</code> entier ! Il vaut mieux dans un premier temps placer les choses où il faut, cela réduit les besoins de customisation de SELinux et est plus pratique pour des raisons de standardisations.</p>
+<p>Le <strong>FSHS</strong> (File System Hierarchy Standard) dit qu'un script d'administration local devrait être placé dans <code>/usr/local/bin</code>, qui est un dossier de type <code>bin_t</code> fonctionnant.  </p>
+<p>Une autre solution est de directement créer des types customs pour notre service.</p>
 <h2 id="creation-dun-nouveau-type-et-dun-module-custom">Création d'un nouveau type et d'un module custom</h2>
 <p>Nous allons utiliser <code>sepolicy generate</code> pour générer un template de policy avec un nouveau type pour notre script.</p>
+<p>/!\ Pensez à supprimer vos modules précédents /!\</p>
 <p>Paquets nécessaires:</p>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a>dnf<span class="w"> </span>install<span class="w"> </span>rpmbuild<span class="w"> </span>sepolicy
 </span></code></pre></div></td></tr></table></div>
-<p>Commande pour générer une policy sur un template "standard init daemon":</p>
+<p>Générez avec <code>sepolicy generate</code> un template de module pour <code>/root/script.sh</code> de type "Standard Init Daemon".</p>
+<details class="note">
+<summary>Commandes</summary>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span>
 <span class="normal"><a href="#__codelineno-8-2">2</a></span>
 <span class="normal"><a href="#__codelineno-8-3">3</a></span>
@@ -682,12 +686,14 @@ On peut ouvrir le fichier <code>.te</code> pour voir le CIL utilisé.</p>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4"></a><span class="c1"># mais ce script.sh est un nouveau fichier généré par la commande</span>
 </span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5"></a><span class="c1"># Il permet d&#39;installer la nouvelle policy</span>
 </span></code></pre></div></td></tr></table></div>
-<p>Cela va nous générer des types customs et une policy basique pour ce script.
+</details>
+<p>Cela va nous générer des types customs et un module basique pour ce script.
 On peut voir le contexte pour le fichier dans le <code>.fc</code> (File Context). Il doit être de type <code>script_exec_t</code>.</p>
 <p>Il nous faut l'appliquer avec <code>semanage fcontext -a -t script_exec_t /root/script.sh</code> et <code>restorecon /root/script.sh</code>.</p>
 <p>Une fois ceci fait on peut relancer le service.</p>
-<p>Le service fonctionne et ne retourne aucune erreur.</p>
-<p>Il est important de noter que le template générer met le type <code>script_t</code> (celui du process) en permissive par défaut dans le <code>.te</code>.</p>
+<p>Le service fonctionne et ne retourne aucune erreur. Cela est grâce à la présence de la maccro <code>init_daemon_domain</code>.</p>
+<p>Il est important de noter que le template généré met le type <code>script_t</code> (celui du process) en permissive par défaut dans le <code>.te</code>.</p>
+<p>Il y a une transition de domaine définie dans le fichier <code>.if</code> permettant au process exécuté par le fichier de passer de <code>script_exec_t</code> à <code>script_t</code>.</p>
 
 
 

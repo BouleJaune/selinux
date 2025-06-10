@@ -122,7 +122,7 @@ Il nous faut l'appliquer avec ``semanage fcontext -a -t script_exec_t /root/scri
 
 Une fois ceci fait on peut relancer le service.
 
-Celui marchera, car c'est surtout ``admin_home_t`` qui bloquait son exécution, cependant dans d'autres cas il faudrait modifier la policy de manière adéquate.
+Le service fonctionne et ne retourne aucune erreur.
 
 Il est important de noter que le template générer met le type ``script_t`` (celui du process) en permissive par défaut dans le ``.te``.
 

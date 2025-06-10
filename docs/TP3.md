@@ -90,14 +90,18 @@ Trouvez une autre manière pour générer un seul module, enlevez le précédent
     semodule -i myscriptfull.pp
     ```
 
-Important: ce module donne les droits au type ``admin_home_t`` entier ! Il vaut mieux dans un premier temps placer les choses où il faut, cela réduit les besoins de customisation de SELinux et est plus pratique pour des raisons de standardisations.
+**Important:** ce module donne les droits au type ``admin_home_t`` entier ! Il vaut mieux dans un premier temps placer les choses où il faut, cela réduit les besoins de customisation de SELinux et est plus pratique pour des raisons de standardisations.
 
-Le FSHS (File System Hierarchy Standard) dit qu'un script d'administration local devrait être placé dans ``/usr/local/bin``, qui est un dossier de type ``bin_t`` fonctionnant.  
+Le **FSHS** (File System Hierarchy Standard) dit qu'un script d'administration local devrait être placé dans ``/usr/local/bin``, qui est un dossier de type ``bin_t`` fonctionnant.  
 
+
+Une autre solution est de directement créer des types customs pour notre service.
 
 ## Création d'un nouveau type et d'un module custom
 
 Nous allons utiliser ``sepolicy generate`` pour générer un template de policy avec un nouveau type pour notre script.
+
+/!\\ Pensez à supprimer vos modules précédents /!\
 
 Paquets nécessaires:
 
@@ -125,8 +129,8 @@ Une fois ceci fait on peut relancer le service.
 
 Le service fonctionne et ne retourne aucune erreur. Cela est grâce à la présence de la maccro ``init_daemon_domain``.
 
-Il est important de noter que le template générer met le type ``script_t`` (celui du process) en permissive par défaut dans le ``.te``.
+Il est important de noter que le template généré met le type ``script_t`` (celui du process) en permissive par défaut dans le ``.te``.
 
-
+Il y a une transition de domaine définie dans le fichier ``.if`` permettant au process exécuté par le fichier de passer de ``script_exec_t`` à ``script_t``.
 
 

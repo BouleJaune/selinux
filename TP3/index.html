@@ -686,7 +686,7 @@ On peut ouvrir le fichier <code>.te</code> pour voir le CIL utilisé.</p>
 On peut voir le contexte pour le fichier dans le <code>.fc</code> (File Context). Il doit être de type <code>script_exec_t</code>.</p>
 <p>Il nous faut l'appliquer avec <code>semanage fcontext -a -t script_exec_t /root/script.sh</code> et <code>restorecon /root/script.sh</code>.</p>
 <p>Une fois ceci fait on peut relancer le service.</p>
-<p>Celui marchera, car c'est surtout <code>admin_home_t</code> qui bloquait son exécution, cependant dans d'autres cas il faudrait modifier la policy de manière adéquate.</p>
+<p>Le service fonctionne et ne retourne aucune erreur.</p>
 <p>Il est important de noter que le template générer met le type <code>script_t</code> (celui du process) en permissive par défaut dans le <code>.te</code>.</p>
 
 

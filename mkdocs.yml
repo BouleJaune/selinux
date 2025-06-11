@@ -6,6 +6,7 @@ nav:
   - Création de module custom: 'TP3.md'
   - MLS/MCS: 'TP4.md'
   - SELinux et conteneurs: 'TP5.md'
+  # - SELinux cheatsheet: 'cheatsheet.md'
 # Theme material
 theme:
   name: "material"

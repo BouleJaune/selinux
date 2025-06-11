@@ -1,5 +1,6 @@
 ## Multi-Level Security (MLS) & Multi-Category Security (MCS)
 
+
 ### Objectifs pédagogiques
 
 * Comprendre les principes de MLS et MCS dans SELinux.
@@ -16,11 +17,6 @@
 * Utiliser une machine Fedora ou RHEL avec le support de MLS/MCS (ex. : `mls` activé via `/etc/selinux/config`).
 * Avoir le paquet `policycoreutils`, `mcstrans`, `setools-console` installé.
 
----
-
-### Contexte du TP
-
-Nous allons simuler une séparation d’informations classifiées par niveaux (MLS) et par catégories (MCS). Deux utilisateurs vont avoir des droits différents sur des fichiers en fonction de leur niveau ou de leur appartenance à des catégories.
 
 ---
 
@@ -28,103 +24,191 @@ Nous allons simuler une séparation d’informations classifiées par niveaux (M
 
 #### Création des utilisateurs Linux et SELinux
 
-```bash
-useradd alice
-useradd bob
-```
+Créez 2 utilisateurs linux ``alice`` et `bob`, puis avec `semanage` créez 2 utilisateurs SELinux `mcs_alice` et `mcs_bob` ayant le rôle `staff_r` et respectivement les ranges `s0:c0` et `s0:c1`.
 
-Définir une plage MLS/MCS restreinte à chaque utilisateur :
+Enfin assignez `bob` et `alice` à leur user SELinux.
 
-```bash
-semanage user -a -R "staff_r" -r "s0:c0" mcs_alice
-semanage user -a -R "staff_r" -r "s0:c1" mcs_bob
-semanage login -a -s mcs_alice alice
-semanage login -a -s mcs_bob bob
-```
+??? Note "Commandes"
 
-Vérification :
+    ```bash
+    useradd alice
+    useradd bob
+    ```
 
-```bash
-semanage login -l
-```
+    Définir une plage MLS/MCS restreinte à chaque utilisateur :
+
+    ```bash
+    semanage user -a -R "staff_r" -r "s0:c0" mcs_alice
+    semanage user -a -R "staff_r" -r "s0:c1" mcs_bob
+    semanage login -a -s mcs_alice alice
+    semanage login -a -s mcs_bob bob
+    ```
+
+    Vérification :
+
+    ```bash
+    semanage login -l
+    ```
 
 ---
 
 ### Manipulation de fichiers avec contexte MCS
 
-Créer un fichier classifié pour chaque catégorie :
+Prenez ces deux fichiers et assignez leur la bonne range vis à vis du user.
 
 ```bash
-touch /tmp/data_alice /tmp/data_bob
-chcon -t user_home_t -l s0:c0 /tmp/data_alice
-chcon -t user_home_t -l s0:c1 /tmp/data_bob
+echo "ok" > /tmp/data_alice 
+echo "ok" > /tmp/data_bob
 ```
 
-#### Test de lecture croisée
+??? Note "Commandes"
 
-Connectez-vous successivement en tant que `alice` et `bob`, testez l'accès à chaque fichier :
+    ```bash
+    chcon -t user_home_t -l s0:c0 /tmp/data_alice
+    chcon -t user_home_t -l s0:c1 /tmp/data_bob
+    ```
+
+#### Test de lecture
+
+Connectez-vous en tant que `alice` ou `bob`, testez l'accès à chaque fichier et observez ce qu'il se passe.
+
+
+??? Note "Commandes"
+    On se connecte sur le user `alice`:
+
+    ```bash
+    su - alice
+    cat /tmp/data_alice
+    cat /tmp/data_bob
+    ```
+
+    Rien ne semble bloqué ! En effet, via ``su -`` le contexte de l'utilisateur n'est pas changé, il faut se connecter via ssh directement sur le user. On peut vérifier le contexte actuel du shell avec ``id -Z``.
+   
+    ```bash
+    passwd alice
+    # sur un autre terminal
+    ssh alice@server
+    id -Z
+    cat /tmp/data_bob
+    ```
+
+    Cela ne bloque pas non plus !
+
+#### Attribut ``mcs_constrained_type``
+
+Par défaut MCS est activé sur targeted, mais depuis quelques versions de RHEL les catégories ne sont contraignantes que si l'attribut ``mcs_constrained_type`` est rattaché au type.
+
+On peut lister les types rattachés à cet attribut avec : ``seinfo -a mcs_constrained_type -x``:
 
 ```bash
-su - alice
-cat /tmp/data_alice
-cat /tmp/data_bob
+Type Attributes: 1
+   attribute mcs_constrained_type;
+        container_device_plugin_init_t
+        container_device_plugin_t
+        container_device_t
+        container_engine_t
+        container_init_t
+        container_kvm_t
+        container_logreader_t
+        container_logwriter_t
+        container_t
+        container_userns_t
+        netlabel_peer_t
+        openshift_app_t
+        openshift_t
+        sandbox_min_t
+        sandbox_net_t
+        sandbox_web_t
+        sandbox_x_t
+        svirt_kvm_net_t
+        svirt_qemu_net_t
+        svirt_t
+        svirt_tcg_t
 ```
 
-Puis :
+On voit que MCS est principalement utilisé par les containers, virtualisation, kubernetes et du sandboxing.
 
-```bash
-su - bob
-cat /tmp/data_bob
-cat /tmp/data_alice
-```
+Il nous faut donc rajouter cet attribut à notre type. Le type de nos utilisateurs ici est ``staff_t``.
 
-**Question** : Que constatez-vous ? Pourquoi ?
+On peut créer un module avec un fichier ``.te`` puis le compiler pour cela.
+
+??? Note "Ajout de l'attribut au type ``staff_t``"
+
+    ``mystaff.te``:
+    ```bash
+    policy_module(mystaff, 1.0)
+    gen_require(`
+        type staff_t;
+        attribute mcs_constrained_type;
+    ')
+
+    typeattribute staff_t mcs_constrained_type;
+    ```
+    Compilation et activation:
+    ```bash
+    make -f /usr/share/selinux/devel/Makefile
+    semodule -i mystaff.pp
+    ```
+
+Maintenant les users ayant le type ``staff_t`` donc le role ``staff_r`` seront contraints par les catégories MCS. Testez après relogin.
+
+
+
+??? Note "Tips"
+    Vous pouvez temporairement changer votre context, notamment pour baisser en permissions, avec :
+
+    ```bash
+    sudo runcon -l s0:c0 -- bash
+    ```
 
 ---
 
-### Changement de contexte de processus utilisateur
+### Plages MLS
 
-Observez les contextes SELinux avec :
+#### Activation de la policy MLS
 
-```bash
-id -Z
-```
-
-Puis changez temporairement le contexte MCS d’un shell :
+Nous allons maintenant installer et activer la policy MLS:
 
 ```bash
-sudo runcon -l s0:c0 -- bash
+dnf install selinux-policy-mls
 ```
 
-Tentez à nouveau la lecture de fichiers. Testez d'autres catégories.
+Il faut faire un relabel de tout le système au boot pour activer SELinux. Changez le fichier de config SELinux pour passer en MLS et en Permissive.
 
----
-
-### Utilisation avancée : plages MLS
-
-Modifiez l'utilisateur `alice` pour qu'il ait une plage de niveaux (ex : `s0 - s1`)
-
+Puis créez un fichier pour trigger le relabel au bot :
 ```bash
-semanage user -m -R "staff_r" -r "s0 - s1:c0.c3" mcs_alice
+touch /.autorelabel
 ```
+
+Redémarrez et vérifier que vous êtes bien en MLS / Permissive après.
+
+
+#### Assignation d'une plage MLS
+
+
+Changer de policy nous a enlevé nos configurations custom. Recréez l'user SELinux d'`alice` puis assignez lui une plage de niveaux MLS `s0-s3`.
+
+Les plages MLS se définissent avec des `-` et les catégories des `.`, on peut aussi lister les catégories avec `,`.
+
+
+
+
+??? Note "Commandes"
+    ```bash
+    semanage user -m -R "staff_r" -r "s0-s3:c0.c3,c8" mcs_alice
+    semanage login -a -s mcs_alice alice
+    ```
+
 
 Créez un fichier avec un niveau supérieur :
 
 ```bash
-chcon -t user_home_t -l s1 /tmp/data_topsecret
+chcon -t user_home_t -l s5 /tmp/data_topsecret
 ```
 
-Testez l’accès avec `alice`. Essayez de changer de niveau avec `runcon`.
+Testez l’accès avec `alice`. Essayez de changer de niveau avec `runcon` et d'écrire dans un fichier ayant un niveau inférieur.
 
----
 
-### Question bonus
-
-* Que se passe-t-il si `alice` a accès à plusieurs catégories ? Peut-elle combiner les lectures ?
-* Peut-on attribuer plusieurs catégories à un fichier ?
-* Quel est l’impact de la commande `mcstransd` dans l'affichage des contextes ?
-
----
 
 ### Nettoyage
 
@@ -138,151 +222,4 @@ semanage user -d mcs_bob
 rm -f /tmp/data_alice /tmp/data_bob /tmp/data_topsecret
 ```
 
----
-
-### Aller plus loin
-
-* Créez un script de vérification automatique du niveau et des catégories autorisées d’un utilisateur.
-* Intégrez ce mécanisme dans un environnement Podman ou systemd avec `selinux-label`.
-
-
-
-
-## Flask — SELinux & MCS/MLS
-
-### Objectif général
-
-Vous devez restreindre l’accès aux fichiers produits ou consultés par l’application `fileserve` selon des **niveaux de confidentialité** ou **catégories**.
-
-L’objectif est de simuler un système à compartiments : un utilisateur ne doit accéder qu’à ses propres documents en fonction de son niveau ou de sa catégorie (ex : équipe A vs B, ou classification Confidentiel vs Public).
-
----
-
-### Phase 1 — Activer la politique MLS
-
-**Question :**
-Vérifiez si la politique SELinux utilisée est bien `mls`. Sinon, modifiez-la et redémarrez.
-
-**Correction :**
-
-```bash
-sestatus | grep Policy
-# Pour changer (si nécessaire)
-sudo dnf install selinux-policy-mls
-sudo grubby --update-kernel=ALL --args="selinux=1 enforcing=1"
-sudo setsebool secure_mode_policyload on
-sudo reboot
-```
-
----
-
-### Phase 2 — Vérifier les niveaux de sécurité
-
-**Question :**
-Quels niveaux sont définis sur votre système ? Quel est celui de votre utilisateur actuel ?
-
-**Correction :**
-
-```bash
-semanage user -l
-id -Z
-```
-
----
-
-### Phase 3 — Attribuer des niveaux de confidentialité à des utilisateurs
-
-**Question :**
-Attribuez à `userA` le niveau `s0:c0`, et à `userB` le niveau `s0:c1`.
-
-**Correction :**
-
-```bash
-sudo semanage login -a -s user_u -r s0-s0:c0 userA
-sudo semanage login -a -s user_u -r s0-s0:c1 userB
-```
-
-Vérifiez :
-
-```bash
-semanage login -l
-```
-
----
-
-### Phase 4 — Créer des fichiers étiquetés par niveau
-
-**Question :**
-Créez deux fichiers :
-
-* Un fichier accessible uniquement par `userA` (catégorie c0)
-* Un fichier accessible uniquement par `userB` (catégorie c1)
-
-**Correction :**
-
-```bash
-touch /data/userA.txt /data/userB.txt
-chcon --user=user_u --role=object_r --type=default_t --range=s0:c0 /data/userA.txt
-chcon --user=user_u --role=object_r --type=default_t --range=s0:c1 /data/userB.txt
-```
-
----
-
-### Phase 5 — Vérification des accès
-
-**Question :**
-Connectez-vous en tant que `userA` et `userB`, testez l’accès croisé aux fichiers. Que constatez-vous ?
-
-**Correction :**
-
-```bash
-su - userA
-cat /data/userA.txt  # OK
-cat /data/userB.txt  # Permission denied (attendu)
-
-su - userB
-cat /data/userB.txt  # OK
-cat /data/userA.txt  # Permission denied (attendu)
-```
-
----
-
-### Phase 6 — Application concrète avec votre service
-
-**Question :**
-Configurez `fileserve` pour fonctionner selon le même principe :
-
-* L’instance lancée par `userA` ne doit lire que les fichiers `s0:c0`
-* Celle de `userB` que les `s0:c1`
-
-**Correction :**
-Il faut :
-
-* S’assurer que les processus ont un contexte `s0:c0` ou `s0:c1`
-* Les fichiers servis doivent être labellisés avec le bon range
-
-```bash
-runcon -r system_r -t user_t -l s0:c0 ./fileserve  # pour userA
-runcon -r system_r -t user_t -l s0:c1 ./fileserve  # pour userB
-```
-
-Labellisez les fichiers correctement :
-
-```bash
-chcon --range=s0:c0 /data/userA-files/*
-chcon --range=s0:c1 /data/userB-files/*
-```
-
----
-
-### Étape bonus — Multi catégories
-
-**Question :**
-Attribuez à un utilisateur les deux catégories `c0,c1`, testez qu’il peut lire les deux fichiers.
-
-**Correction :**
-
-```bash
-sudo semanage login -a -s user_u -r s0-s0:c0,c1 userAdmin
-runcon -r system_r -t user_t -l s0:c0,c1 ./fileserve
-```
+Repassez en `targeted` avec un `/.autorelabel` et nettoyez encore.

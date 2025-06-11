@@ -15,7 +15,7 @@
 
 * VM Fedora Server avec SELinux
 * Accès root
-* Paquets utiles installés : `policycoreutils`, `policycoreutils-python-utils`, `setroubleshoot`, `audit`, `selinux-policy-devel`
+* Paquets utiles installés : `policycoreutils`, `policycoreutils-python-utils`, `setroubleshoot`, `audit`, `selinux-policy-devel` ``setools-console``
 
 ---
 

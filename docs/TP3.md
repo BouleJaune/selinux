@@ -141,13 +141,16 @@ Il y a une transition de domaine définie dans le fichier ``.if`` permettant au 
   ```bash
   /usr/share/selinux/devel/include
   ```
-* **sepolicy-interface** :
+
+* sepolicy-interface :
 
   ```bash
   man sepolicy-interface
   sepolicy interface -vl | grep init_domain
   ```
-* **Attributs**:
+
+* Attributs avec `seinfo`:
+
   ```bash
   seinfo -a -x
   grep -R [attribut] /usr/share/selinux/devel/include/

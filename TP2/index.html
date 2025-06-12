@@ -766,46 +766,37 @@ Correction : </p>
 <details class="note">
 <summary>Solution</summary>
 <p>Commençons par remettre à zéro notre configuration httpd :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1"> 1</a></span>
-<span class="normal"><a href="#__codelineno-8-2"> 2</a></span>
-<span class="normal"><a href="#__codelineno-8-3"> 3</a></span>
-<span class="normal"><a href="#__codelineno-8-4"> 4</a></span>
-<span class="normal"><a href="#__codelineno-8-5"> 5</a></span>
-<span class="normal"><a href="#__codelineno-8-6"> 6</a></span>
-<span class="normal"><a href="#__codelineno-8-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-8-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-8-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-8-10">10</a></span>
-<span class="normal"><a href="#__codelineno-8-11">11</a></span>
-<span class="normal"><a href="#__codelineno-8-12">12</a></span>
-<span class="normal"><a href="#__codelineno-8-13">13</a></span>
-<span class="normal"><a href="#__codelineno-8-14">14</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1"></a>cp<span class="w"> </span>/tmp/httpd.conf.old<span class="w"> </span>/etc/httpd/conf/httpd.conf
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2"></a><span class="sb">````</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3"></a>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4"></a>Le<span class="w"> </span>script:<span class="w"> </span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5"></a>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6"></a><span class="sb">```</span>bash
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>/var/www/cgi-bin
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>/var/www/cgi-bin/testnet.sh<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
-</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9"></a><span class="s">#!/bin/bash</span>
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10"></a><span class="s">echo &quot;Content-type: http&quot;</span>
-</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11"></a><span class="s">echo &quot;&quot;</span>
-</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12"></a><span class="s">curl -s https://channels.nixos.org</span>
-</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13"></a><span class="s">EOF</span>
-</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14"></a>chmod<span class="w"> </span>+x<span class="w"> </span>/var/www/cgi-bin/testnet.sh
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1"></a>cp<span class="w"> </span>/tmp/httpd.conf.old<span class="w"> </span>/etc/httpd/conf/httpd.conf
 </span></code></pre></div></td></tr></table></div>
-<p>Rajoutez dans la conf httpd : </p>
-<div class="language-html highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span>
+<p>Le script: </p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span>
 <span class="normal"><a href="#__codelineno-9-2">2</a></span>
 <span class="normal"><a href="#__codelineno-9-3">3</a></span>
 <span class="normal"><a href="#__codelineno-9-4">4</a></span>
 <span class="normal"><a href="#__codelineno-9-5">5</a></span>
-<span class="normal"><a href="#__codelineno-9-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1"></a>ScriptAlias /cgi-bin/ /var/www/cgi-bin/
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2"></a><span class="p">&lt;</span><span class="nt">Directory</span> <span class="err">&quot;/</span><span class="na">var</span><span class="err">/</span><span class="na">www</span><span class="err">/</span><span class="na">cgi-bin</span><span class="err">&quot;</span><span class="p">&gt;</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3"></a>    AllowOverride None
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4"></a>    Options +ExecCGI
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5"></a>    Require all granted
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6"></a><span class="p">&lt;/</span><span class="nt">Directory</span><span class="p">&gt;</span>
+<span class="normal"><a href="#__codelineno-9-6">6</a></span>
+<span class="normal"><a href="#__codelineno-9-7">7</a></span>
+<span class="normal"><a href="#__codelineno-9-8">8</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>/var/www/cgi-bin
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>/var/www/cgi-bin/testnet.sh<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="s">#!/bin/bash</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4"></a><span class="s">echo &quot;Content-type: http&quot;</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5"></a><span class="s">echo &quot;&quot;</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6"></a><span class="s">curl -s https://channels.nixos.org</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7"></a><span class="s">EOF</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8"></a>chmod<span class="w"> </span>+x<span class="w"> </span>/var/www/cgi-bin/testnet.sh
+</span></code></pre></div></td></tr></table></div>
+<p>Rajoutez dans la conf httpd : </p>
+<div class="language-html highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span>
+<span class="normal"><a href="#__codelineno-10-2">2</a></span>
+<span class="normal"><a href="#__codelineno-10-3">3</a></span>
+<span class="normal"><a href="#__codelineno-10-4">4</a></span>
+<span class="normal"><a href="#__codelineno-10-5">5</a></span>
+<span class="normal"><a href="#__codelineno-10-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1"></a>ScriptAlias /cgi-bin/ /var/www/cgi-bin/
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2"></a><span class="p">&lt;</span><span class="nt">Directory</span> <span class="err">&quot;/</span><span class="na">var</span><span class="err">/</span><span class="na">www</span><span class="err">/</span><span class="na">cgi-bin</span><span class="err">&quot;</span><span class="p">&gt;</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3"></a>    AllowOverride None
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4"></a>    Options +ExecCGI
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5"></a>    Require all granted
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6"></a><span class="p">&lt;/</span><span class="nt">Directory</span><span class="p">&gt;</span>
 </span></code></pre></div></td></tr></table></div>
 <p>Puis redémarrez <code>httpd</code> avec <code>systemctl restart httpd</code></p>
 </details>
@@ -813,11 +804,11 @@ Correction : </p>
 <p>Observez le blocage SELinux et corrigez via un booléen </p>
 <details class="note">
 <summary>Solution</summary>
-<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1"></a>sealert<span class="w"> </span>-a<span class="w"> </span>/var/log/audit/audit.log
+<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1"></a>sealert<span class="w"> </span>-a<span class="w"> </span>/var/log/audit/audit.log
 </span></code></pre></div></td></tr></table></div>
 <code>sealert</code> nous suggère pour notre erreur 3 solution avec divers scores de confiance.
 La première nous demande si on veut que "htppd can network connect", ce qui est bien notre cas. La solution est suggérée est d'activer un booléen et la commande est fournie.</p>
-<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1"></a>setsebool<span class="w"> </span>-P<span class="w"> </span>httpd_can_network_connect<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="c1"># active le booléen de manière permanente</span>
+<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1"></a>setsebool<span class="w"> </span>-P<span class="w"> </span>httpd_can_network_connect<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="c1"># active le booléen de manière permanente</span>
 </span></code></pre></div></td></tr></table></div>
 Le site devrait maintenant être accessible.</p>
 </details>

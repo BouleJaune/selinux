@@ -105,7 +105,7 @@ L'url sera sur http://{ip-serveur}/cgi-bin/testnet.sh, mais elle ne devrait pas 
 
     ```bash
     cp /tmp/httpd.conf.old /etc/httpd/conf/httpd.conf
-    ````
+    ```
 
     Le script: 
 

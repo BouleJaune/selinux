@@ -19,34 +19,15 @@ system/init.if => def de init_daemon_domain
 flask/access_vectors : list des perm possibles 
 
 
-|    Kernel        |      CIL           |
-| ---------------- | ------------------ |
-| *attribute*      | *typeattribute*    |
-| *typeattribute*  | *typeattributeset* |
-| *attribute_role* | *roleattribute*    |
-| *roleattribute*  | *roleattributeset* |
-| *allow*          | *allow*            |
-| *allow* (role)   | *roleallow*        |
-| *dominance*      | *sensitivityorder* |
-
-Voici d’abord les réponses à tes questions, puis une **cheatsheet** des macros et attributs SELinux les plus utiles.
-
----
-
-## Questions / Réponses
-
-### 1. Rôle des fichiers `.te` et `.if`
 
 * **`.te`** (*Type Enforcement*) contient les **règles SELinux** (déclarations de types, `allow`, `type_transition`, etc.) et les appels aux macros M4 pour générer ces règles.
 * **`.if`** (*Interface File*) sert à **définir des interfaces et des macros spécifiques à un module**, réutilisables par d’autres modules. On y déclare des points d’extension (avec `interface` et `provides`) ou des petits morceaux de code M4 à inclure.
 
-### 2. Macro vs Interface (`.if`)
 
 * Les **macros** SELinux sont écrites en M4 et, à l’exécution, sont **expansées** en règles CIL.
 * Beaucoup de ces macros sont définies dans les **fichiers `.spt`** de `/usr/share/selinux/devel/include/`.
 * Les fichiers `.if` regroupent en partie ces macros ou déclarent de nouvelles **interfaces** (fonctions) que tu peux appeler depuis ton `.te`.
 
-### 3. Attributs SELinux
 
 * Un **attribute** est un **groupe logique** de types, permettant d’écrire des règles sur tous les types qui lui sont associés.
 * On déclare un attribut :
@@ -64,22 +45,23 @@ Voici d’abord les réponses à tes questions, puis une **cheatsheet** des macr
 
   pour autoriser **tous** les types du groupe `myattr` à effectuer certaines opérations.
 
-### 4. Où trouver la liste des macros et attributs disponibles ?
+### Où trouver la liste des macros et attributs disponibles ?
 
-* **Sur ta machine** (Fedora/RHEL) :
+* Sur le serveur les sources sont disponibles dans :
 
   ```bash
-  grep -R "define(" /usr/share/selinux/devel/include/*.spt
-  grep -R "attribute" /usr/share/selinux/devel/include/*.spt
+  /usr/share/selinux/devel/include
   ```
-* **Documentation upstream** sur GitHub refpolicy :
-
-  * Macros : `policy/modules/support/*.spt`
-  * Attributs : `policy/modules/support/constraints.spt`
-* **Pages de manuel** (si installées) :
+* **sepolicy-interface** :
 
   ```bash
-  man sepolicy-macros
+  man sepolicy-interface
+  sepolicy interface -vl | grep init_domain
+  ```
+* **Attributs**:
+  ```bash
+  seinfo -a -x
+  grep -R [attribut] /usr/share/selinux/devel/include/
   ```
 
 ---

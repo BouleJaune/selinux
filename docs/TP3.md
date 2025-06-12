@@ -134,3 +134,21 @@ Il est important de noter que le template généré met le type ``script_t`` (ce
 Il y a une transition de domaine définie dans le fichier ``.if`` permettant au process exécuté par le fichier de passer de ``script_exec_t`` à ``script_t``.
 
 
+### Où trouver la liste des macros et attributs disponibles ?
+
+* Sur le serveur les sources sont disponibles dans :
+
+  ```bash
+  /usr/share/selinux/devel/include
+  ```
+* **sepolicy-interface** :
+
+  ```bash
+  man sepolicy-interface
+  sepolicy interface -vl | grep init_domain
+  ```
+* **Attributs**:
+  ```bash
+  seinfo -a -x
+  grep -R [attribut] /usr/share/selinux/devel/include/
+  ```

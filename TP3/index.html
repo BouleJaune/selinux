@@ -728,18 +728,22 @@ On peut voir le contexte pour le fichier dans le <code>.fc</code> (File Context)
 <ul>
 <li>Sur le serveur les sources sont disponibles dans :</li>
 </ul>
-<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1"></a>/usr/share/selinux/devel/include
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1"></a>/usr/share/selinux/devel/include
 </span></code></pre></div></td></tr></table></div>
-* <strong>sepolicy-interface</strong> :</p>
-<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span>
+<ul>
+<li>sepolicy-interface :</li>
+</ul>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span>
 <span class="normal"><a href="#__codelineno-10-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1"></a>man<span class="w"> </span>sepolicy-interface
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2"></a>sepolicy<span class="w"> </span>interface<span class="w"> </span>-vl<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>init_domain
 </span></code></pre></div></td></tr></table></div>
-* <strong>Attributs</strong>:
-  <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span>
+<ul>
+<li>Attributs avec <code>seinfo</code>:</li>
+</ul>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span>
 <span class="normal"><a href="#__codelineno-11-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1"></a>seinfo<span class="w"> </span>-a<span class="w"> </span>-x
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2"></a>grep<span class="w"> </span>-R<span class="w"> </span><span class="o">[</span>attribut<span class="o">]</span><span class="w"> </span>/usr/share/selinux/devel/include/
-</span></code></pre></div></td></tr></table></div></p>
+</span></code></pre></div></td></tr></table></div>
 
 
 

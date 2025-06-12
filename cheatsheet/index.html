@@ -412,6 +412,156 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#questions-reponses" class="md-nav__link">
+    <span class="md-ellipsis">
+      Questions / Réponses
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Questions / Réponses">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-role-des-fichiers-te-et-if" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Rôle des fichiers .te et .if
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-macro-vs-interface-if" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Macro vs Interface (.if)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-attributs-selinux" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Attributs SELinux
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-ou-trouver-la-liste-des-macros-et-attributs-disponibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Où trouver la liste des macros et attributs disponibles ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cheatsheet-des-macros-et-attributs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cheatsheet des macros et attributs
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-en-tete-du-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. En-tête du module
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-require" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. require
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-declaration-de-types-attributs" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Déclaration de types &amp; attributs
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-domain-setup-macros" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Domain setup macros
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-regles-dautorisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Règles d’autorisation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-transitions-de-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Transitions de type
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-file-contexts-fcontext" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. File contexts (fcontext)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-interfaces-packaging" class="md-nav__link">
+    <span class="md-ellipsis">
+      8. Interfaces &amp; packaging
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-compilation-resume" class="md-nav__link">
+    <span class="md-ellipsis">
+      9. Compilation résumé
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-ou-trouver-les-macros-et-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      10. Où trouver les macros et détails
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -434,6 +584,11 @@
 <h2 id="cil-language">CIL Language</h2>
 <p>compilation
 ref</p>
+<p>Attribut groupe de types</p>
+<p>kernel/mcs. défini macro <code>mcs_constraint</code>
+/usr/share/selinux/devel/include
+system/init.if =&gt; def de init_daemon_domain</p>
+<p>flask/access_vectors : list des perm possibles </p>
 <table>
 <thead>
 <tr>
@@ -472,6 +627,272 @@ ref</p>
 </tr>
 </tbody>
 </table>
+<p>Voici d’abord les réponses à tes questions, puis une <strong>cheatsheet</strong> des macros et attributs SELinux les plus utiles.</p>
+<hr />
+<h2 id="questions-reponses">Questions / Réponses</h2>
+<h3 id="1-role-des-fichiers-te-et-if">1. Rôle des fichiers <code>.te</code> et <code>.if</code></h3>
+<ul>
+<li><strong><code>.te</code></strong> (<em>Type Enforcement</em>) contient les <strong>règles SELinux</strong> (déclarations de types, <code>allow</code>, <code>type_transition</code>, etc.) et les appels aux macros M4 pour générer ces règles.</li>
+<li><strong><code>.if</code></strong> (<em>Interface File</em>) sert à <strong>définir des interfaces et des macros spécifiques à un module</strong>, réutilisables par d’autres modules. On y déclare des points d’extension (avec <code>interface</code> et <code>provides</code>) ou des petits morceaux de code M4 à inclure.</li>
+</ul>
+<h3 id="2-macro-vs-interface-if">2. Macro vs Interface (<code>.if</code>)</h3>
+<ul>
+<li>Les <strong>macros</strong> SELinux sont écrites en M4 et, à l’exécution, sont <strong>expansées</strong> en règles CIL.</li>
+<li>Beaucoup de ces macros sont définies dans les <strong>fichiers <code>.spt</code></strong> de <code>/usr/share/selinux/devel/include/</code>.</li>
+<li>Les fichiers <code>.if</code> regroupent en partie ces macros ou déclarent de nouvelles <strong>interfaces</strong> (fonctions) que tu peux appeler depuis ton <code>.te</code>.</li>
+</ul>
+<h3 id="3-attributs-selinux">3. Attributs SELinux</h3>
+<ul>
+<li>Un <strong>attribute</strong> est un <strong>groupe logique</strong> de types, permettant d’écrire des règles sur tous les types qui lui sont associés.</li>
+<li>On déclare un attribut :</li>
+</ul>
+<p><div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
+<span class="normal"><a href="#__codelineno-0-2">2</a></span>
+<span class="normal"><a href="#__codelineno-0-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>attribute myattr;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>type mytype;  
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a>typeattribute mytype, myattr;
+</span></code></pre></div></td></tr></table></div>
+* On peut ensuite écrire</p>
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>allow some_t myattr:class { perms… };
+</span></code></pre></div></td></tr></table></div>
+<p>pour autoriser <strong>tous</strong> les types du groupe <code>myattr</code> à effectuer certaines opérations.</p>
+<h3 id="4-ou-trouver-la-liste-des-macros-et-attributs-disponibles">4. Où trouver la liste des macros et attributs disponibles ?</h3>
+<ul>
+<li><strong>Sur ta machine</strong> (Fedora/RHEL) :</li>
+</ul>
+<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
+<span class="normal"><a href="#__codelineno-2-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a>grep<span class="w"> </span>-R<span class="w"> </span><span class="s2">&quot;define(&quot;</span><span class="w"> </span>/usr/share/selinux/devel/include/*.spt
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2"></a>grep<span class="w"> </span>-R<span class="w"> </span><span class="s2">&quot;attribute&quot;</span><span class="w"> </span>/usr/share/selinux/devel/include/*.spt
+</span></code></pre></div></td></tr></table></div>
+* <strong>Documentation upstream</strong> sur GitHub refpolicy :</p>
+<ul>
+<li>Macros : <code>policy/modules/support/*.spt</code></li>
+<li>Attributs : <code>policy/modules/support/constraints.spt</code></li>
+<li><strong>Pages de manuel</strong> (si installées) :</li>
+</ul>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a>man<span class="w"> </span>sepolicy-macros
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h2 id="cheatsheet-des-macros-et-attributs">Cheatsheet des macros et attributs</h2>
+<table>
+<thead>
+<tr>
+<th><strong>Macro</strong></th>
+<th><strong>But</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>init_daemon_domain(domain,exec_t)</code></td>
+<td>Configure un domaine système complet : transitions, accès logs, sockets, cgroups, etc.</td>
+</tr>
+<tr>
+<td><code>unconfined_domain(domain)</code></td>
+<td>Rend le domaine aussi permissif que <code>unconfined_t</code> (pas de confinement MAC).</td>
+</tr>
+<tr>
+<td><code>domain_type(domain)</code></td>
+<td>Marque un type comme domaine (processus) pour recevoir des règles <code>allow</code>.</td>
+</tr>
+<tr>
+<td><code>domain_entry_file(domain, exec_type)</code></td>
+<td>Crée la transition auto depuis <code>init_t</code> lors de l’exécution du binaire <code>exec_type</code>.</td>
+</tr>
+<tr>
+<td><code>corecmd_search_bin(domain)</code></td>
+<td>Autorise l’accès aux binaires standard (<code>/bin</code>, <code>/usr/bin</code>) pour <code>domain</code>.</td>
+</tr>
+<tr>
+<td><code>corenet_tcp_connect_ports(domain)</code></td>
+<td>Autorise toutes les connexions TCP sortantes de <code>domain</code>.</td>
+</tr>
+<tr>
+<td><code>files_read_generic(domain)</code></td>
+<td>Autorise la lecture de la plupart des fichiers de configuration système pour <code>domain</code>.</td>
+</tr>
+<tr>
+<td><code>allow_network_tcp(domain)</code></td>
+<td>Autorise les connexions TCP sortantes de <code>domain</code> (nom / port).</td>
+</tr>
+<tr>
+<td><code>secsock_stream_connect(domain)</code></td>
+<td>Autorise <code>stream_socket</code> connect (UNIX sockets).</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th><strong>Attribut</strong></th>
+<th><strong>But</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>daemon_type</code></td>
+<td>Regroupe tous les types de services système (httpd_t, sshd_t, etc.)</td>
+</tr>
+<tr>
+<td><code>file_type</code></td>
+<td>Regroupe les types de fichiers standards (etc_t, var_log_t, tmp_t…)</td>
+</tr>
+<tr>
+<td><code>netif_type</code></td>
+<td>Regroupe les types d’interfaces réseau SELinux</td>
+</tr>
+<tr>
+<td><code>port_type</code></td>
+<td>Tous les types de ports réseau (<code>http_port_t</code>, <code>ssh_port_t</code>…)</td>
+</tr>
+<tr>
+<td><code>user_home_type</code></td>
+<td>Types de répertoires et fichiers sous <code>/home/*</code></td>
+</tr>
+<tr>
+<td><code>unlabeled_type</code></td>
+<td>Objets sans label ou label par défaut</td>
+</tr>
+<tr>
+<td><code>mcs_constrained_type</code></td>
+<td>Types qui respectent les contraintes MCS (catégories)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note</strong> : cette liste est non exhaustive. Utilise les grep sur les <code>.spt</code> pour découvrir d’autres macros et attributs disponibles sur ton système.</p>
+</blockquote>
+<hr />
+<p>Avec cette <strong>cheatsheet</strong>, tu as une vue d’ensemble rapide des outils M4 à ta disposition pour écrire des <code>.te</code> propres et maintenir ta politique SELinux.</p>
+<p>Non : les fichiers <code>.te</code> (Type Enforcement) ne sont pas du CIL brut, mais utilisent un <strong>langage à base de macros m4</strong> qui, lors de la compilation, est transformé en CIL avant d’être compilé en binaire. Pour toi, qui écris essentiellement des <code>.te</code>, voici une <strong>cheatsheet</strong> ciblée sur le contenu d’un <code>.te</code> :</p>
+<hr />
+<h2 id="1-en-tete-du-module">1. En-tête du module</h2>
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a>module monservice 1.0;
+</span></code></pre></div></td></tr></table></div>
+<ul>
+<li><strong><code>module &lt;nom&gt; &lt;version&gt;;</code></strong> : identifie le module et sa version.</li>
+</ul>
+<hr />
+<h2 id="2-require">2. <code>require</code></h2>
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
+<span class="normal"><a href="#__codelineno-5-2">2</a></span>
+<span class="normal"><a href="#__codelineno-5-3">3</a></span>
+<span class="normal"><a href="#__codelineno-5-4">4</a></span>
+<span class="normal"><a href="#__codelineno-5-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a>require {
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2"></a>    type       unconfined_t;
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3"></a>    type       var_log_t;
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4"></a>    class      file { read write open getattr };
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5"></a>}
+</span></code></pre></div></td></tr></table></div>
+<ul>
+<li><strong>But</strong> : déclarer tous les types, rôles, classes et permissions dont tu auras besoin.</li>
+<li><strong>Où</strong> : souvent en tête de fichier, avant toute règle.</li>
+</ul>
+<hr />
+<h2 id="3-declaration-de-types-attributs">3. Déclaration de types &amp; attributs</h2>
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
+<span class="normal"><a href="#__codelineno-6-2">2</a></span>
+<span class="normal"><a href="#__codelineno-6-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a>type           monsvc_t;
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2"></a>type           monsvc_exec_t;
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3"></a>typeattribute  monsvc_type, daemon_type;
+</span></code></pre></div></td></tr></table></div>
+<ul>
+<li><strong><code>type X;</code></strong> : crée un nouveau type X (domaine ou objet).</li>
+<li><strong><code>typeattribute T, A;</code></strong> : associe le type T à l’attribut A (pour factoriser les règles sur plusieurs types).</li>
+</ul>
+<hr />
+<h2 id="4-domain-setup-macros">4. Domain setup macros</h2>
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a>init_daemon_domain(monsvc_t, monsvc_exec_t)
+</span></code></pre></div></td></tr></table></div>
+<ul>
+<li>
+<p><strong><code>init_daemon_domain(domain, exec_type)</code></strong> :</p>
+</li>
+<li>
+<p>Déclare <code>domain</code> comme domaine de démon</p>
+</li>
+<li>Crée la transition automatiquement depuis <code>init_t</code>/<code>systemd_t</code></li>
+<li>Ajoute un ensemble complet de règles courantes (accès logs, sockets, etc.)</li>
+<li>
+<p><strong>Alternative plus stricte</strong> :</p>
+</li>
+<li>
+<p>Éviter les macros « unconfined »</p>
+</li>
+<li>Définir manuellement des <code>allow</code> ciblés</li>
+</ul>
+<hr />
+<h2 id="5-regles-dautorisation">5. Règles d’autorisation</h2>
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span>
+<span class="normal"><a href="#__codelineno-8-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1"></a>allow monsvc_t var_log_t:file { read write open getattr };
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2"></a>dontaudit monsvc_t etc_t:dir { search };
+</span></code></pre></div></td></tr></table></div>
+<ul>
+<li><strong><code>allow &lt;src&gt; &lt;tgt&gt;:&lt;class&gt; { perms… };</code></strong> : autorise explicitement les permissions.</li>
+<li><strong><code>dontaudit</code></strong> : idem <code>allow</code> mais <strong>n’écrit pas</strong> de logs AVC (utile pour “nettoyer” les non-pertinents).</li>
+<li><strong><code>auditallow</code></strong> : force la journalisation même si la règle existe.</li>
+</ul>
+<hr />
+<h2 id="6-transitions-de-type">6. Transitions de type</h2>
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1"></a>type_transition init_t monsvc_exec_t:process monsvc_t;
+</span></code></pre></div></td></tr></table></div>
+<ul>
+<li><strong><code>type_transition S T:class U;</code></strong> :
+  quand un objet de type S exécute T dans la classe class,
+  le nouveau processus héritera du type U.</li>
+</ul>
+<hr />
+<h2 id="7-file-contexts-fcontext">7. File contexts (fcontext)</h2>
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span>
+<span class="normal"><a href="#__codelineno-10-2">2</a></span>
+<span class="normal"><a href="#__codelineno-10-3">3</a></span>
+<span class="normal"><a href="#__codelineno-10-4">4</a></span>
+<span class="normal"><a href="#__codelineno-10-5">5</a></span>
+<span class="normal"><a href="#__codelineno-10-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1"></a># fichier contextuel (équivalent semanage fcontext)
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2"></a>file_contexts=$(cat &lt;&lt;EOF
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3"></a>/opt/monservice/bin/helloserver   gen_context(system_u, object_r, monsvc_exec_t, s0)
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4"></a>/opt/monservice/logs(/.*)?         gen_context(system_u, object_r, var_log_t, s0)
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5"></a>EOF
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6"></a>)
+</span></code></pre></div></td></tr></table></div>
+<ul>
+<li>En <code>.te</code> pur, on ne déclare pas de <code>file_context</code>;
+  on utilise <code>monolithic_context</code> ou <strong>on gère via semanage</strong>.</li>
+<li>Les modules <code>.fc</code> séparés contiennent ces lignes.</li>
+</ul>
+<hr />
+<h2 id="8-interfaces-packaging">8. Interfaces &amp; packaging</h2>
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span>
+<span class="normal"><a href="#__codelineno-11-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1"></a>interface(`monservice_if&#39;)      # déclare un point d’extension
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2"></a>provides(`monservice_if&#39;)       # indique qu’on fournit cette interface
+</span></code></pre></div></td></tr></table></div>
+<ul>
+<li><strong>Pour partager des règles</strong> entre modules ou respecter des dépendances.</li>
+</ul>
+<hr />
+<h2 id="9-compilation-resume">9. Compilation résumé</h2>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span>
+<span class="normal"><a href="#__codelineno-12-2">2</a></span>
+<span class="normal"><a href="#__codelineno-12-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1"></a>checkmodule<span class="w">    </span>-M<span class="w"> </span>-m<span class="w"> </span>-o<span class="w"> </span>monservice.mod<span class="w"> </span>monservice.te
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2"></a>semodule_package<span class="w"> </span>-o<span class="w"> </span>monservice.pp<span class="w"> </span>-m<span class="w"> </span>monservice.mod
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3"></a>sudo<span class="w"> </span>semodule<span class="w">  </span>-i<span class="w"> </span>monservice.pp
+</span></code></pre></div></td></tr></table></div>
+<hr />
+<h2 id="10-ou-trouver-les-macros-et-details">10. Où trouver les macros et détails</h2>
+<ul>
+<li><strong>Fichiers include</strong> (Fedora/RHEL) :
+  <code>/usr/share/selinux/devel/include/*.spt</code>
+  <code>/usr/share/selinux/devel/include/support/obj_perm_sets.spt</code>
+  <code>/usr/share/selinux/devel/include/services/*.te</code></li>
+<li><strong>Refpolicy GitHub</strong> :
+  <a href="https://github.com/SELinuxProject/refpolicy">https://github.com/SELinuxProject/refpolicy</a> (dossier <code>policy/modules</code> et <code>include/</code>)</li>
+<li><strong>Pages de manuel</strong> :
+  <code>man selinux-policy-devel</code>
+  <code>man sepolicy</code></li>
+</ul>
+<hr />
+<blockquote>
+<p>Cette <strong>cheat-sheet</strong> couvre l’essentiel pour <strong>rédiger des fichiers <code>.te</code></strong> clairs, précis et maintenables, sans te plonger dans le CIL bas-niveau.</p>
+</blockquote>
 
 
 

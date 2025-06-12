@@ -410,49 +410,13 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#questions-reponses" class="md-nav__link">
-    <span class="md-ellipsis">
-      Questions / Réponses
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Questions / Réponses">
+    <nav class="md-nav" aria-label="CIL Language">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-role-des-fichiers-te-et-if" class="md-nav__link">
+  <a href="#ou-trouver-la-liste-des-macros-et-attributs-disponibles" class="md-nav__link">
     <span class="md-ellipsis">
-      1. Rôle des fichiers .te et .if
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-macro-vs-interface-if" class="md-nav__link">
-    <span class="md-ellipsis">
-      2. Macro vs Interface (.if)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-attributs-selinux" class="md-nav__link">
-    <span class="md-ellipsis">
-      3. Attributs SELinux
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-ou-trouver-la-liste-des-macros-et-attributs-disponibles" class="md-nav__link">
-    <span class="md-ellipsis">
-      4. Où trouver la liste des macros et attributs disponibles ?
+      Où trouver la liste des macros et attributs disponibles ?
     </span>
   </a>
   
@@ -589,61 +553,21 @@ ref</p>
 /usr/share/selinux/devel/include
 system/init.if =&gt; def de init_daemon_domain</p>
 <p>flask/access_vectors : list des perm possibles </p>
-<table>
-<thead>
-<tr>
-<th>Kernel</th>
-<th>CIL</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><em>attribute</em></td>
-<td><em>typeattribute</em></td>
-</tr>
-<tr>
-<td><em>typeattribute</em></td>
-<td><em>typeattributeset</em></td>
-</tr>
-<tr>
-<td><em>attribute_role</em></td>
-<td><em>roleattribute</em></td>
-</tr>
-<tr>
-<td><em>roleattribute</em></td>
-<td><em>roleattributeset</em></td>
-</tr>
-<tr>
-<td><em>allow</em></td>
-<td><em>allow</em></td>
-</tr>
-<tr>
-<td><em>allow</em> (role)</td>
-<td><em>roleallow</em></td>
-</tr>
-<tr>
-<td><em>dominance</em></td>
-<td><em>sensitivityorder</em></td>
-</tr>
-</tbody>
-</table>
-<p>Voici d’abord les réponses à tes questions, puis une <strong>cheatsheet</strong> des macros et attributs SELinux les plus utiles.</p>
-<hr />
-<h2 id="questions-reponses">Questions / Réponses</h2>
-<h3 id="1-role-des-fichiers-te-et-if">1. Rôle des fichiers <code>.te</code> et <code>.if</code></h3>
 <ul>
 <li><strong><code>.te</code></strong> (<em>Type Enforcement</em>) contient les <strong>règles SELinux</strong> (déclarations de types, <code>allow</code>, <code>type_transition</code>, etc.) et les appels aux macros M4 pour générer ces règles.</li>
-<li><strong><code>.if</code></strong> (<em>Interface File</em>) sert à <strong>définir des interfaces et des macros spécifiques à un module</strong>, réutilisables par d’autres modules. On y déclare des points d’extension (avec <code>interface</code> et <code>provides</code>) ou des petits morceaux de code M4 à inclure.</li>
-</ul>
-<h3 id="2-macro-vs-interface-if">2. Macro vs Interface (<code>.if</code>)</h3>
-<ul>
-<li>Les <strong>macros</strong> SELinux sont écrites en M4 et, à l’exécution, sont <strong>expansées</strong> en règles CIL.</li>
+<li>
+<p><strong><code>.if</code></strong> (<em>Interface File</em>) sert à <strong>définir des interfaces et des macros spécifiques à un module</strong>, réutilisables par d’autres modules. On y déclare des points d’extension (avec <code>interface</code> et <code>provides</code>) ou des petits morceaux de code M4 à inclure.</p>
+</li>
+<li>
+<p>Les <strong>macros</strong> SELinux sont écrites en M4 et, à l’exécution, sont <strong>expansées</strong> en règles CIL.</p>
+</li>
 <li>Beaucoup de ces macros sont définies dans les <strong>fichiers <code>.spt</code></strong> de <code>/usr/share/selinux/devel/include/</code>.</li>
-<li>Les fichiers <code>.if</code> regroupent en partie ces macros ou déclarent de nouvelles <strong>interfaces</strong> (fonctions) que tu peux appeler depuis ton <code>.te</code>.</li>
-</ul>
-<h3 id="3-attributs-selinux">3. Attributs SELinux</h3>
-<ul>
-<li>Un <strong>attribute</strong> est un <strong>groupe logique</strong> de types, permettant d’écrire des règles sur tous les types qui lui sont associés.</li>
+<li>
+<p>Les fichiers <code>.if</code> regroupent en partie ces macros ou déclarent de nouvelles <strong>interfaces</strong> (fonctions) que tu peux appeler depuis ton <code>.te</code>.</p>
+</li>
+<li>
+<p>Un <strong>attribute</strong> est un <strong>groupe logique</strong> de types, permettant d’écrire des règles sur tous les types qui lui sont associés.</p>
+</li>
 <li>On déclare un attribut :</li>
 </ul>
 <p><div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
@@ -656,22 +580,22 @@ system/init.if =&gt; def de init_daemon_domain</p>
 <div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>allow some_t myattr:class { perms… };
 </span></code></pre></div></td></tr></table></div>
 <p>pour autoriser <strong>tous</strong> les types du groupe <code>myattr</code> à effectuer certaines opérations.</p>
-<h3 id="4-ou-trouver-la-liste-des-macros-et-attributs-disponibles">4. Où trouver la liste des macros et attributs disponibles ?</h3>
+<h3 id="ou-trouver-la-liste-des-macros-et-attributs-disponibles">Où trouver la liste des macros et attributs disponibles ?</h3>
 <ul>
-<li><strong>Sur ta machine</strong> (Fedora/RHEL) :</li>
+<li>Sur le serveur les sources sont disponibles dans :</li>
 </ul>
-<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
-<span class="normal"><a href="#__codelineno-2-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a>grep<span class="w"> </span>-R<span class="w"> </span><span class="s2">&quot;define(&quot;</span><span class="w"> </span>/usr/share/selinux/devel/include/*.spt
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2"></a>grep<span class="w"> </span>-R<span class="w"> </span><span class="s2">&quot;attribute&quot;</span><span class="w"> </span>/usr/share/selinux/devel/include/*.spt
+<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a>/usr/share/selinux/devel/include
 </span></code></pre></div></td></tr></table></div>
-* <strong>Documentation upstream</strong> sur GitHub refpolicy :</p>
-<ul>
-<li>Macros : <code>policy/modules/support/*.spt</code></li>
-<li>Attributs : <code>policy/modules/support/constraints.spt</code></li>
-<li><strong>Pages de manuel</strong> (si installées) :</li>
-</ul>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a>man<span class="w"> </span>sepolicy-macros
+* <strong>sepolicy-interface</strong> :</p>
+<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a>man<span class="w"> </span>sepolicy-interface
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2"></a>sepolicy<span class="w"> </span>interface<span class="w"> </span>-vl<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>init_domain
 </span></code></pre></div></td></tr></table></div>
+* <strong>Attributs</strong>:
+  <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
+<span class="normal"><a href="#__codelineno-4-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a>seinfo<span class="w"> </span>-a<span class="w"> </span>-x
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2"></a>grep<span class="w"> </span>-R<span class="w"> </span><span class="o">[</span>attribut<span class="o">]</span><span class="w"> </span>/usr/share/selinux/devel/include/
+</span></code></pre></div></td></tr></table></div></p>
 <hr />
 <h2 id="cheatsheet-des-macros-et-attributs">Cheatsheet des macros et attributs</h2>
 <table>
@@ -766,22 +690,22 @@ system/init.if =&gt; def de init_daemon_domain</p>
 <p>Non : les fichiers <code>.te</code> (Type Enforcement) ne sont pas du CIL brut, mais utilisent un <strong>langage à base de macros m4</strong> qui, lors de la compilation, est transformé en CIL avant d’être compilé en binaire. Pour toi, qui écris essentiellement des <code>.te</code>, voici une <strong>cheatsheet</strong> ciblée sur le contenu d’un <code>.te</code> :</p>
 <hr />
 <h2 id="1-en-tete-du-module">1. En-tête du module</h2>
-<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a>module monservice 1.0;
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a>module monservice 1.0;
 </span></code></pre></div></td></tr></table></div>
 <ul>
 <li><strong><code>module &lt;nom&gt; &lt;version&gt;;</code></strong> : identifie le module et sa version.</li>
 </ul>
 <hr />
 <h2 id="2-require">2. <code>require</code></h2>
-<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
-<span class="normal"><a href="#__codelineno-5-2">2</a></span>
-<span class="normal"><a href="#__codelineno-5-3">3</a></span>
-<span class="normal"><a href="#__codelineno-5-4">4</a></span>
-<span class="normal"><a href="#__codelineno-5-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a>require {
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2"></a>    type       unconfined_t;
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3"></a>    type       var_log_t;
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4"></a>    class      file { read write open getattr };
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5"></a>}
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
+<span class="normal"><a href="#__codelineno-6-2">2</a></span>
+<span class="normal"><a href="#__codelineno-6-3">3</a></span>
+<span class="normal"><a href="#__codelineno-6-4">4</a></span>
+<span class="normal"><a href="#__codelineno-6-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a>require {
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2"></a>    type       unconfined_t;
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3"></a>    type       var_log_t;
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4"></a>    class      file { read write open getattr };
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5"></a>}
 </span></code></pre></div></td></tr></table></div>
 <ul>
 <li><strong>But</strong> : déclarer tous les types, rôles, classes et permissions dont tu auras besoin.</li>
@@ -789,11 +713,11 @@ system/init.if =&gt; def de init_daemon_domain</p>
 </ul>
 <hr />
 <h2 id="3-declaration-de-types-attributs">3. Déclaration de types &amp; attributs</h2>
-<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
-<span class="normal"><a href="#__codelineno-6-2">2</a></span>
-<span class="normal"><a href="#__codelineno-6-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a>type           monsvc_t;
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2"></a>type           monsvc_exec_t;
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3"></a>typeattribute  monsvc_type, daemon_type;
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span>
+<span class="normal"><a href="#__codelineno-7-2">2</a></span>
+<span class="normal"><a href="#__codelineno-7-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a>type           monsvc_t;
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2"></a>type           monsvc_exec_t;
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3"></a>typeattribute  monsvc_type, daemon_type;
 </span></code></pre></div></td></tr></table></div>
 <ul>
 <li><strong><code>type X;</code></strong> : crée un nouveau type X (domaine ou objet).</li>
@@ -801,7 +725,7 @@ system/init.if =&gt; def de init_daemon_domain</p>
 </ul>
 <hr />
 <h2 id="4-domain-setup-macros">4. Domain setup macros</h2>
-<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a>init_daemon_domain(monsvc_t, monsvc_exec_t)
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1"></a>init_daemon_domain(monsvc_t, monsvc_exec_t)
 </span></code></pre></div></td></tr></table></div>
 <ul>
 <li>
@@ -822,9 +746,9 @@ system/init.if =&gt; def de init_daemon_domain</p>
 </ul>
 <hr />
 <h2 id="5-regles-dautorisation">5. Règles d’autorisation</h2>
-<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span>
-<span class="normal"><a href="#__codelineno-8-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1"></a>allow monsvc_t var_log_t:file { read write open getattr };
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2"></a>dontaudit monsvc_t etc_t:dir { search };
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span>
+<span class="normal"><a href="#__codelineno-9-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1"></a>allow monsvc_t var_log_t:file { read write open getattr };
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2"></a>dontaudit monsvc_t etc_t:dir { search };
 </span></code></pre></div></td></tr></table></div>
 <ul>
 <li><strong><code>allow &lt;src&gt; &lt;tgt&gt;:&lt;class&gt; { perms… };</code></strong> : autorise explicitement les permissions.</li>
@@ -833,7 +757,7 @@ system/init.if =&gt; def de init_daemon_domain</p>
 </ul>
 <hr />
 <h2 id="6-transitions-de-type">6. Transitions de type</h2>
-<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1"></a>type_transition init_t monsvc_exec_t:process monsvc_t;
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1"></a>type_transition init_t monsvc_exec_t:process monsvc_t;
 </span></code></pre></div></td></tr></table></div>
 <ul>
 <li><strong><code>type_transition S T:class U;</code></strong> :
@@ -842,17 +766,17 @@ system/init.if =&gt; def de init_daemon_domain</p>
 </ul>
 <hr />
 <h2 id="7-file-contexts-fcontext">7. File contexts (fcontext)</h2>
-<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span>
-<span class="normal"><a href="#__codelineno-10-2">2</a></span>
-<span class="normal"><a href="#__codelineno-10-3">3</a></span>
-<span class="normal"><a href="#__codelineno-10-4">4</a></span>
-<span class="normal"><a href="#__codelineno-10-5">5</a></span>
-<span class="normal"><a href="#__codelineno-10-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1"></a># fichier contextuel (équivalent semanage fcontext)
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2"></a>file_contexts=$(cat &lt;&lt;EOF
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3"></a>/opt/monservice/bin/helloserver   gen_context(system_u, object_r, monsvc_exec_t, s0)
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4"></a>/opt/monservice/logs(/.*)?         gen_context(system_u, object_r, var_log_t, s0)
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5"></a>EOF
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6"></a>)
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span>
+<span class="normal"><a href="#__codelineno-11-2">2</a></span>
+<span class="normal"><a href="#__codelineno-11-3">3</a></span>
+<span class="normal"><a href="#__codelineno-11-4">4</a></span>
+<span class="normal"><a href="#__codelineno-11-5">5</a></span>
+<span class="normal"><a href="#__codelineno-11-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1"></a># fichier contextuel (équivalent semanage fcontext)
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2"></a>file_contexts=$(cat &lt;&lt;EOF
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3"></a>/opt/monservice/bin/helloserver   gen_context(system_u, object_r, monsvc_exec_t, s0)
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4"></a>/opt/monservice/logs(/.*)?         gen_context(system_u, object_r, var_log_t, s0)
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5"></a>EOF
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6"></a>)
 </span></code></pre></div></td></tr></table></div>
 <ul>
 <li>En <code>.te</code> pur, on ne déclare pas de <code>file_context</code>;
@@ -861,20 +785,20 @@ system/init.if =&gt; def de init_daemon_domain</p>
 </ul>
 <hr />
 <h2 id="8-interfaces-packaging">8. Interfaces &amp; packaging</h2>
-<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span>
-<span class="normal"><a href="#__codelineno-11-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1"></a>interface(`monservice_if&#39;)      # déclare un point d’extension
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2"></a>provides(`monservice_if&#39;)       # indique qu’on fournit cette interface
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span>
+<span class="normal"><a href="#__codelineno-12-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1"></a>interface(`monservice_if&#39;)      # déclare un point d’extension
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2"></a>provides(`monservice_if&#39;)       # indique qu’on fournit cette interface
 </span></code></pre></div></td></tr></table></div>
 <ul>
 <li><strong>Pour partager des règles</strong> entre modules ou respecter des dépendances.</li>
 </ul>
 <hr />
 <h2 id="9-compilation-resume">9. Compilation résumé</h2>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span>
-<span class="normal"><a href="#__codelineno-12-2">2</a></span>
-<span class="normal"><a href="#__codelineno-12-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1"></a>checkmodule<span class="w">    </span>-M<span class="w"> </span>-m<span class="w"> </span>-o<span class="w"> </span>monservice.mod<span class="w"> </span>monservice.te
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2"></a>semodule_package<span class="w"> </span>-o<span class="w"> </span>monservice.pp<span class="w"> </span>-m<span class="w"> </span>monservice.mod
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3"></a>sudo<span class="w"> </span>semodule<span class="w">  </span>-i<span class="w"> </span>monservice.pp
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1">1</a></span>
+<span class="normal"><a href="#__codelineno-13-2">2</a></span>
+<span class="normal"><a href="#__codelineno-13-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1"></a>checkmodule<span class="w">    </span>-M<span class="w"> </span>-m<span class="w"> </span>-o<span class="w"> </span>monservice.mod<span class="w"> </span>monservice.te
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2"></a>semodule_package<span class="w"> </span>-o<span class="w"> </span>monservice.pp<span class="w"> </span>-m<span class="w"> </span>monservice.mod
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3"></a>sudo<span class="w"> </span>semodule<span class="w">  </span>-i<span class="w"> </span>monservice.pp
 </span></code></pre></div></td></tr></table></div>
 <hr />
 <h2 id="10-ou-trouver-les-macros-et-details">10. Où trouver les macros et détails</h2>

@@ -422,6 +422,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Création d&#39;un nouveau type et d&#39;un module custom">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ou-trouver-la-liste-des-macros-et-attributs-disponibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      Où trouver la liste des macros et attributs disponibles ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -573,6 +588,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Création d&#39;un nouveau type et d&#39;un module custom">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ou-trouver-la-liste-des-macros-et-attributs-disponibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      Où trouver la liste des macros et attributs disponibles ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -694,6 +724,22 @@ On peut voir le contexte pour le fichier dans le <code>.fc</code> (File Context)
 <p>Le service fonctionne et ne retourne aucune erreur. Cela est grâce à la présence de la maccro <code>init_daemon_domain</code>.</p>
 <p>Il est important de noter que le template généré met le type <code>script_t</code> (celui du process) en permissive par défaut dans le <code>.te</code>.</p>
 <p>Il y a une transition de domaine définie dans le fichier <code>.if</code> permettant au process exécuté par le fichier de passer de <code>script_exec_t</code> à <code>script_t</code>.</p>
+<h3 id="ou-trouver-la-liste-des-macros-et-attributs-disponibles">Où trouver la liste des macros et attributs disponibles ?</h3>
+<ul>
+<li>Sur le serveur les sources sont disponibles dans :</li>
+</ul>
+<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1"></a>/usr/share/selinux/devel/include
+</span></code></pre></div></td></tr></table></div>
+* <strong>sepolicy-interface</strong> :</p>
+<p><div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span>
+<span class="normal"><a href="#__codelineno-10-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1"></a>man<span class="w"> </span>sepolicy-interface
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2"></a>sepolicy<span class="w"> </span>interface<span class="w"> </span>-vl<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>init_domain
+</span></code></pre></div></td></tr></table></div>
+* <strong>Attributs</strong>:
+  <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span>
+<span class="normal"><a href="#__codelineno-11-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1"></a>seinfo<span class="w"> </span>-a<span class="w"> </span>-x
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2"></a>grep<span class="w"> </span>-R<span class="w"> </span><span class="o">[</span>attribut<span class="o">]</span><span class="w"> </span>/usr/share/selinux/devel/include/
+</span></code></pre></div></td></tr></table></div></p>
 
 
 

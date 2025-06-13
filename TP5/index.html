@@ -615,23 +615,23 @@
 <p>Créez un utilisateur dédié à podman et connectez vous dessus.</p>
 <details class="note">
 <summary>Commandes</summary>
-</details>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
 <span class="normal"><a href="#__codelineno-0-2">2</a></span>
 <span class="normal"><a href="#__codelineno-0-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>useradd<span class="w"> </span>-m<span class="w"> </span>podtest
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>passwd<span class="w"> </span>podtest
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a>su<span class="w"> </span>-<span class="w"> </span>podtest
 </span></code></pre></div></td></tr></table></div>
+</details>
 <p>Lancez un conteneur nginx nommé <code>tp-web</code> sur le port <code>8080</code> et observez son contexte.</p>
 <details class="note">
 <summary>Commandes</summary>
-</details>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
 <span class="normal"><a href="#__codelineno-1-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>podman<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>tp-web<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:80<span class="w"> </span>docker.io/library/nginx
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a>firewall-cmd<span class="w"> </span>--add-port<span class="o">=</span><span class="m">8080</span>/tcp<span class="w"> </span>
 </span></code></pre></div></td></tr></table></div>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a>ps<span class="w"> </span>-efZ<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>nginx
 </span></code></pre></div></td></tr></table></div>
+</details>
 <hr />
 <h2 id="montage-dun-volume-sans-option-de-label">Montage d’un volume sans option de label</h2>
 <ul>

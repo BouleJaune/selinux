@@ -64,8 +64,8 @@ echo "ok" > /tmp/data_bob
 ??? Note "Commandes"
 
     ```bash
-    chcon -t user_home_t -l s0:c0 /tmp/data_alice
-    chcon -t user_home_t -l s0:c1 /tmp/data_bob
+    chcon  -l s0:c0 /tmp/data_alice
+    chcon  -l s0:c1 /tmp/data_bob
     ```
 
 #### Test de lecture
@@ -158,7 +158,7 @@ Maintenant les users ayant le type ``staff_t`` donc le role ``staff_r`` seront c
     Vous pouvez temporairement changer votre context, notamment pour baisser en permissions, avec :
 
     ```bash
-    sudo runcon -l s0:c0 -- bash
+    runcon -l s0:c0 -- bash
     ```
 
 ---
@@ -182,6 +182,15 @@ touch /.autorelabel
 
 Redémarrez et vérifier que vous êtes bien en MLS / Permissive après.
 
+#### Notes sur MLS
+
+La politique MLS restreint certaines parties du système même en mode permissif.
+
+Notamment, par défaut, `root` via une connexion ssh ne pourra pas avoir son type `sys_adm` et sera simplement en `staff_t`. Il faut pour cela décommenter la dernière ligne de `/etc/selinux/mls/contexts/users/root`. 
+
+Par défaut MLS n'autorise que les secure TTY à se connecter, ces TTY sont listés dans `/etc/selinux/mls/contexts/secure_tty_types`.
+
+Vous pourrez observer dans logs `ausearch` qu'il y a beaucoup d'alertes diverses, et que même `ausearch` lui même remonte des alertes de sécurité en MLS. D'où la pertinence de lancer le système en Permissive.
 
 #### Assignation d'une plage MLS
 
@@ -189,8 +198,6 @@ Redémarrez et vérifier que vous êtes bien en MLS / Permissive après.
 Changer de policy nous a enlevé nos configurations custom. Recréez l'user SELinux d'`alice` puis assignez lui une plage de niveaux MLS `s0-s3`.
 
 Les plages MLS se définissent avec des `-` et les catégories des `.`, on peut aussi lister les catégories avec `,`.
-
-
 
 
 ??? Note "Commandes"
@@ -203,11 +210,10 @@ Les plages MLS se définissent avec des `-` et les catégories des `.`, on peut 
 Créez un fichier avec un niveau supérieur :
 
 ```bash
-chcon -t user_home_t -l s5 /tmp/data_topsecret
+chcon -l s5 /tmp/data_topsecret
 ```
 
 Testez l’accès avec `alice`. Essayez de changer de niveau avec `runcon` et d'écrire dans un fichier ayant un niveau inférieur.
-
 
 
 ### Nettoyage

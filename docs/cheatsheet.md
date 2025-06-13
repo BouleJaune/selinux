@@ -208,7 +208,7 @@ On peut déclarer des nouveaux types, attributs et typeattribute (liens entre un
 ```bash
 type           montype;
 attribute           monattr;
-typeattribute  montype, monattr;
+typeattribute  montype monattr;
 ```
 
 ### Règles 
@@ -289,7 +289,7 @@ Simplement .... `process`
 
 #### Permissions sur fichiers
 ```bash
-append, create, execute, getattr, ioctl [syscall I/O], link, read, rename, write
+append, create, execute, getattr, ioctl, link, read, rename, write
 ```
 
 #### Permissions sur les sockets

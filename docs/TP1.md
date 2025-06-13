@@ -63,7 +63,7 @@ chmod +x ~/script.sh
 
 Le service:
 ```bash
-cat <<EOF | sudo tee /etc/systemd/system/myscript.service
+cat <<EOF | tee /etc/systemd/system/myscript.service
 [Unit]
 Description=Test SELinux Script
 

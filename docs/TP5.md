@@ -108,7 +108,7 @@ Une fois ceci fait, activez le module.
     ```bash
     podman run -d --name tp-web \
       --security-opt label=type:tp-web.process \
-      -v ~/nginx_data:/usr/share/nginx/html \
+      -v ~/nginx:/usr/share/nginx/html \
       -p 8080:80 nginx
     ```
 
@@ -119,4 +119,8 @@ ll -Z nginx
 ps -eZ | grep nginx
 ```
 
+Si vous n'avez pas supprimer le dossier `nginx` ou modifier son contexte, sans le `:z`/`:Z` podman ne tentera pas de relabeliser et le dossier `nginx` gardera son contexte précédent.
+
 Le dossier nginx n'a pas son contexte modifié sans l'option `:Z`/`:z` mais fonctionne quand même, car la permission a été rajoutée via la policy d'udica.
+
+La policy donne les droits sur le type par initial du dossier mount.

@@ -686,7 +686,7 @@ Une fois ceci fait, activez le module.</p>
 <span class="normal"><a href="#__codelineno-8-3">3</a></span>
 <span class="normal"><a href="#__codelineno-8-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1"></a>podman<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>tp-web<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2"></a><span class="w">  </span>--security-opt<span class="w"> </span><span class="nv">label</span><span class="o">=</span>type:tp-web.process<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3"></a><span class="w">  </span>-v<span class="w"> </span>~/nginx_data:/usr/share/nginx/html<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3"></a><span class="w">  </span>-v<span class="w"> </span>~/nginx:/usr/share/nginx/html<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4"></a><span class="w">  </span>-p<span class="w"> </span><span class="m">8080</span>:80<span class="w"> </span>nginx
 </span></code></pre></div></td></tr></table></div>
 </details>
@@ -695,7 +695,9 @@ Une fois ceci fait, activez le module.</p>
 <span class="normal"><a href="#__codelineno-9-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1"></a>ll<span class="w"> </span>-Z<span class="w"> </span>nginx
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2"></a>ps<span class="w"> </span>-eZ<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>nginx
 </span></code></pre></div></td></tr></table></div>
+<p>Si vous n'avez pas supprimer le dossier <code>nginx</code> ou modifier son contexte, sans le <code>:z</code>/<code>:Z</code> podman ne tentera pas de relabeliser et le dossier <code>nginx</code> gardera son contexte précédent.</p>
 <p>Le dossier nginx n'a pas son contexte modifié sans l'option <code>:Z</code>/<code>:z</code> mais fonctionne quand même, car la permission a été rajoutée via la policy d'udica.</p>
+<p>La policy donne les droits sur le type par initial du dossier mount.</p>
 
 
 

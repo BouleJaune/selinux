@@ -476,6 +476,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#notes-sur-mls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notes sur MLS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#assignation-dune-plage-mls" class="md-nav__link">
     <span class="md-ellipsis">
       Assignation d'une plage MLS
@@ -684,6 +693,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#notes-sur-mls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notes sur MLS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#assignation-dune-plage-mls" class="md-nav__link">
     <span class="md-ellipsis">
       Assignation d'une plage MLS
@@ -779,8 +797,8 @@
 <details class="note">
 <summary>Commandes</summary>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
-<span class="normal"><a href="#__codelineno-4-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a>chcon<span class="w"> </span>-t<span class="w"> </span>user_home_t<span class="w"> </span>-l<span class="w"> </span>s0:c0<span class="w"> </span>/tmp/data_alice
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2"></a>chcon<span class="w"> </span>-t<span class="w"> </span>user_home_t<span class="w"> </span>-l<span class="w"> </span>s0:c1<span class="w"> </span>/tmp/data_bob
+<span class="normal"><a href="#__codelineno-4-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a>chcon<span class="w">  </span>-l<span class="w"> </span>s0:c0<span class="w"> </span>/tmp/data_alice
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2"></a>chcon<span class="w">  </span>-l<span class="w"> </span>s0:c1<span class="w"> </span>/tmp/data_bob
 </span></code></pre></div></td></tr></table></div>
 </details>
 <h4 id="test-de-lecture">Test de lecture</h4>
@@ -886,7 +904,7 @@ Compilation et activation:
 <details class="note">
 <summary>Tips</summary>
 <p>Vous pouvez temporairement changer votre context, notamment pour baisser en permissions, avec :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1"></a>sudo<span class="w"> </span>runcon<span class="w"> </span>-l<span class="w"> </span>s0:c0<span class="w"> </span>--<span class="w"> </span>bash
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1"></a>runcon<span class="w"> </span>-l<span class="w"> </span>s0:c0<span class="w"> </span>--<span class="w"> </span>bash
 </span></code></pre></div></td></tr></table></div>
 </details>
 <hr />
@@ -900,6 +918,11 @@ Compilation et activation:
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1"></a>touch<span class="w"> </span>/.autorelabel
 </span></code></pre></div></td></tr></table></div></p>
 <p>Redémarrez et vérifier que vous êtes bien en MLS / Permissive après.</p>
+<h4 id="notes-sur-mls">Notes sur MLS</h4>
+<p>La politique MLS restreint certaines parties du système même en mode permissif.</p>
+<p>Notamment, par défaut, <code>root</code> via une connexion ssh ne pourra pas avoir son type <code>sys_adm</code> et sera simplement en <code>staff_t</code>. Il faut pour cela décommenter la dernière ligne de <code>/etc/selinux/mls/contexts/users/root</code>. </p>
+<p>Par défaut MLS n'autorise que les secure TTY à se connecter, ces TTY sont listés dans <code>/etc/selinux/mls/contexts/secure_tty_types</code>.</p>
+<p>Vous pourrez observer dans logs <code>ausearch</code> qu'il y a beaucoup d'alertes diverses, et que même <code>ausearch</code> lui même remonte des alertes de sécurité en MLS. D'où la pertinence de lancer le système en Permissive.</p>
 <h4 id="assignation-dune-plage-mls">Assignation d'une plage MLS</h4>
 <p>Changer de policy nous a enlevé nos configurations custom. Recréez l'user SELinux d'<code>alice</code> puis assignez lui une plage de niveaux MLS <code>s0-s3</code>.</p>
 <p>Les plages MLS se définissent avec des <code>-</code> et les catégories des <code>.</code>, on peut aussi lister les catégories avec <code>,</code>.</p>
@@ -911,7 +934,7 @@ Compilation et activation:
 </span></code></pre></div></td></tr></table></div>
 </details>
 <p>Créez un fichier avec un niveau supérieur :</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-14-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1"></a>chcon<span class="w"> </span>-t<span class="w"> </span>user_home_t<span class="w"> </span>-l<span class="w"> </span>s5<span class="w"> </span>/tmp/data_topsecret
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-14-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1"></a>chcon<span class="w"> </span>-l<span class="w"> </span>s5<span class="w"> </span>/tmp/data_topsecret
 </span></code></pre></div></td></tr></table></div>
 <p>Testez l’accès avec <code>alice</code>. Essayez de changer de niveau avec <code>runcon</code> et d'écrire dans un fichier ayant un niveau inférieur.</p>
 <h3 id="nettoyage">Nettoyage</h3>

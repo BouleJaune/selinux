@@ -23,26 +23,24 @@ Créez un utilisateur dédié à podman et connectez vous dessus.
 
 
 ??? Note "Commandes"
-  ```bash
-  useradd -m podtest
-  passwd podtest
-  su - podtest
-  ```
+    ```bash
+    useradd -m podtest
+    passwd podtest
+    su - podtest
+    ```
 
 Lancez un conteneur nginx nommé `tp-web` sur le port `8080` et observez son contexte.
 
 
 ??? Note "Commandes"
+    ```bash
+    podman run -d --name tp-web -p 8080:80 docker.io/library/nginx
+    firewall-cmd --add-port=8080/tcp 
+    ```
 
-  ```bash
-  podman run -d --name tp-web -p 8080:80 docker.io/library/nginx
-  firewall-cmd --add-port=8080/tcp 
-  ```
-
-
-  ```bash
-  ps -efZ | grep nginx
-  ```
+    ```bash
+    ps -efZ | grep nginx
+    ```
 
 ---
 

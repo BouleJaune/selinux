@@ -53,7 +53,7 @@ Lancez un conteneur nginx nommé `tp-web` sur le port `8080` et observez son con
 ??? Note "Commandes"
 
     ```bash
-    mkdir nginx && echo "ok" > index.html
+    mkdir nginx && echo "ok" > ./nginx/index.html
     podman stop tp-web && podman rm tp-web
     podman run -d -name tp-web -p 8080:80 -v ./nginx:/usr/share/nginx/html nginx
     ```

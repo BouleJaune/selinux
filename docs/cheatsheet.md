@@ -1,121 +1,197 @@
 # SELinux cheatsheet
 
-## policies
+## État de SELinux
 
-## contextes
+Voir l'état de SELinux :
 
-## CIL Language
-compilation
-ref
+```bash
+getenforce
+sestatus
+cat /etc/selinux/config
+```
 
+## Contextes
 
-Attribut groupe de types
+Voir les contextes de différents objets : 
 
+```bash
+netstat -Z
+id -Z
+ps -Z
+ls -Z
+```
 
-kernel/mcs. défini macro `mcs_constraint`
-/usr/share/selinux/devel/include
-system/init.if => def de init_daemon_domain
+Changer de contexte :
 
-flask/access_vectors : list des perm possibles 
+```bash
+chcon contexte fichier # Change un contexte
+semanage fcontext # Règles de contextes en dur (regex possible) 
+restorecon # Remet le contexte par défaut selon les règles
+```
 
+## Logs
 
+Présents dans `/var/log/messages`/`journalctl`.
 
-* **`.te`** (*Type Enforcement*) contient les **règles SELinux** (déclarations de types, `allow`, `type_transition`, etc.) et les appels aux macros M4 pour générer ces règles.
-* **`.if`** (*Interface File*) sert à **définir des interfaces et des macros spécifiques à un module**, réutilisables par d’autres modules. On y déclare des points d’extension (avec `interface` et `provides`) ou des petits morceaux de code M4 à inclure.
+Si `auditd` actif, alors aussi dans `/var/log/audit/audit.log`.
 
+Le paquet `setroubleshoot` fourni des outils pour analyser les logs, notamment `sealert`.
 
-* Les **macros** SELinux sont écrites en M4 et, à l’exécution, sont **expansées** en règles CIL.
-* Beaucoup de ces macros sont définies dans les **fichiers `.spt`** de `/usr/share/selinux/devel/include/`.
-* Les fichiers `.if` regroupent en partie ces macros ou déclarent de nouvelles **interfaces** (fonctions) que tu peux appeler depuis ton `.te`.
+Les alertes sont des "AVC denials" (access vector cache).
 
+- Filtre les events auditd par type de message AVC
 
-* Un **attribute** est un **groupe logique** de types, permettant d’écrire des règles sur tous les types qui lui sont associés.
-* On déclare un attribut :
+```bash
+ausearch -m AVC 
+```
 
-  ```te
-  attribute myattr;
-  type mytype;  
-  typeattribute mytype, myattr;
-  ```
-* On peut ensuite écrire
+- Donne plus de détails et des suggestions de résolutions sur les erreurs
 
-  ```te
-  allow some_t myattr:class { perms… };
-  ```
+```bash
+sealert -a /var/log/audit/audit.log 
+sealert -l "ID_ALERTE"
+```
 
-  pour autoriser **tous** les types du groupe `myattr` à effectuer certaines opérations.
+- Donne le même type de logs que sealert et aussi la commande pour pour afficher cette alerte avec sealert ( | grep sealert)
 
-### Où trouver la liste des macros et attributs disponibles ?
+```bash
+journalctl -u setroubleshootd 
+systemctl status setroubleshootd 
+```
 
-* Sur le serveur les sources sont disponibles dans :
+## Résolutions
 
-  ```bash
-  /usr/share/selinux/devel/include
-  ```
-* **sepolicy-interface** :
+Dans un premier temps observer la pertinence des suggestions de résolution ``sealert``.
 
-  ```bash
-  man sepolicy-interface
-  sepolicy interface -vl | grep init_domain
-  ```
-* **Attributs**:
-  ```bash
-  seinfo -a -x
-  grep -R [attribut] /usr/share/selinux/devel/include/
-  ```
+#### FSHS
 
----
+Bien penser son application selon les standards, mettre des fichiers binaires dans le dossier binaire, les confs dans `/etc` etc ...
 
-## Cheatsheet des macros et attributs
+Spec du FSHS (file system hierarchy standard) décrivant les conventions et la structure de l'arborescence des fichiers Linux: [FHS](https://refspecs.linuxfoundation.org/FHS_3.0/fhs/index.html)
 
-| **Macro**                              | **But**                                                                                |
-| -------------------------------------- | -------------------------------------------------------------------------------------- |
-| `init_daemon_domain(domain,exec_t)`    | Configure un domaine système complet : transitions, accès logs, sockets, cgroups, etc. |
-| `unconfined_domain(domain)`            | Rend le domaine aussi permissif que `unconfined_t` (pas de confinement MAC).           |
-| `domain_type(domain)`                  | Marque un type comme domaine (processus) pour recevoir des règles `allow`.             |
-| `domain_entry_file(domain, exec_type)` | Crée la transition auto depuis `init_t` lors de l’exécution du binaire `exec_type`.    |
-| `corecmd_search_bin(domain)`           | Autorise l’accès aux binaires standard (`/bin`, `/usr/bin`) pour `domain`.             |
-| `corenet_tcp_connect_ports(domain)`    | Autorise toutes les connexions TCP sortantes de `domain`.                              |
-| `files_read_generic(domain)`           | Autorise la lecture de la plupart des fichiers de configuration système pour `domain`. |
-| `allow_network_tcp(domain)`            | Autorise les connexions TCP sortantes de `domain` (nom / port).                        |
-| `secsock_stream_connect(domain)`       | Autorise `stream_socket` connect (UNIX sockets).                                       |
+#### Contextes
 
-| **Attribut**           | **But**                                                                 |
-| ---------------------- | ----------------------------------------------------------------------- |
-| `daemon_type`          | Regroupe tous les types de services système (httpd\_t, sshd\_t, etc.)   |
-| `file_type`            | Regroupe les types de fichiers standards (etc\_t, var\_log\_t, tmp\_t…) |
-| `netif_type`           | Regroupe les types d’interfaces réseau SELinux                          |
-| `port_type`            | Tous les types de ports réseau (`http_port_t`, `ssh_port_t`…)           |
-| `user_home_type`       | Types de répertoires et fichiers sous `/home/*`                         |
-| `unlabeled_type`       | Objets sans label ou label par défaut                                   |
-| `mcs_constrained_type` | Types qui respectent les contraintes MCS (catégories)                   |
+S'inspirer des contextes par défaut d'une application pour les mettre sur notre configuration non-standard (ex: contexte du dossier par défaut du contenu apache)
 
-> **Note** : cette liste est non exhaustive. Utilise les grep sur les `.spt` pour découvrir d’autres macros et attributs disponibles sur ton système.
+#### Booléens
 
----
+Les booléens sont des règles activables/désactivables concernant des configurations assez courantes de services.
 
-Avec cette **cheatsheet**, tu as une vue d’ensemble rapide des outils M4 à ta disposition pour écrire des `.te` propres et maintenir ta politique SELinux.
+On peut les afficher et voir si ce que l'on veut pour notre application existe.
+
+```bash
+getsebool -a | grep process
+setsebool boolean 0 ou 1
+```
+
+Afficher ce que font les booléens:
+
+```bash
+sepolicy booleans -a
+```
 
 
+#### | audit2allow
+
+On peut générer des règles directement à partir des logs d'alertes en pipant dans `audit2allow`.
+
+```bash
+ausearch -m AVC -p PID | audit2allow -M monmodule_local
+semodule -i monmodule_local.pp
+```
+
+C'est une bonne idée de différencier nos modules customs notamment en rajoutant ``_local`` dans leur nom.
+
+Point d'attention sur le fait de bien filtrer les bonnes alertes avec `ausarch`. On peut filtre par `pid`, `ppid`, nom de commande etc ...
+
+Il faut penser à vérifier ce que le module fait en lisant notamment le `.te` pour voir si c'est pertinent.
 
 
-Non : les fichiers `.te` (Type Enforcement) ne sont pas du CIL brut, mais utilisent un **langage à base de macros m4** qui, lors de la compilation, est transformé en CIL avant d’être compilé en binaire. Pour toi, qui écris essentiellement des `.te`, voici une **cheatsheet** ciblée sur le contenu d’un `.te` :
+#### Génération de templates de modules
 
----
+On peut générer des templates de modules avec ``sepolicy generate``.
 
-## 1. En-tête du module
+Il y a plusieurs types de templates, fournissant une structure de base pour notre module.
 
-```te
+Cela va notamment nous générer des types customs pour notre application.
+
+Génère un template de type "Standard Init Daemon":
+```bash
+sepolicy generate --init /root/script.sh -n script
+```
+
+Voir `man sepolicy generate` pour une description des différents templates.
+
+Par défaut le module sera en permissive dans le `.te` !
+
+
+## Language
+
+### Fichiers
+
+- `.te` contient les règles SELinux
+
+- `.if` définit des interfaces et macros spécifiques pour pouvoir les réutiliser, et notamment des transitions de domaines fichier`=>`process
+
+- `.fc` défini des contextes par défaut pour des fichiers
+
+
+### Macros et attributs
+
+Les macros et attributs permettent de donner des droits de manières factorisées.
+
+Une macro est comme une fonction dans un autre langage, permettant d'appliquer différentes choses sur les éléments en entrée de la macro.
+
+Un attribut représente un groupe de types, on peut assigner un type à un attribut pour y rattacher les permissions de l'attribut.
+
+Les sources des attributs et macros sont visibles dans le dossier `/usr/share/selinux/devel/include`.
+
+On peut aussi avoir des exemples sur : [refPolicy](https://github.com/SELinuxProject/refpolicy/tree/master)
+
+- Liste des attributs: 
+
+```bash
+seinfo -a -x
+```
+
+- Liste des macros avec explication :
+
+```bash
+sepolicy interface -vl
+```
+Cela ne liste pas toutes les macros possibles
+
+
+
+
+
+
+
+
+
+### Structure `.te`
+- Entête
+
+```bash
 module monservice 1.0;
 ```
 
-* **`module <nom> <version>;`** : identifie le module et sa version.
+Une macro est aussi disponible : 
+
+```bash
+policy_module(monservice, 1.0)
+```
+
+La macro va notamment prendre en require tout les class de permissions.
+
 
 ---
 
-## 2. `require`
+- `require`
 
-```te
+La keyword `require` permet de récupérer des variables existantes à utiliser dans le reste du fichier.
+
+```bash
 require {
     type       unconfined_t;
     type       var_log_t;
@@ -123,117 +199,110 @@ require {
 }
 ```
 
-* **But** : déclarer tous les types, rôles, classes et permissions dont tu auras besoin.
-* **Où** : souvent en tête de fichier, avant toute règle.
+Il existe aussi une macro `gen_require()`
 
----
+### Déclaration de types & attributs
 
-## 3. Déclaration de types & attributs
+On peut déclarer des nouveaux types, attributs et typeattribute (liens entre un type et un attribut.
 
-```te
-type           monsvc_t;
-type           monsvc_exec_t;
-typeattribute  monsvc_type, daemon_type;
+```bash
+type           montype;
+attribute           monattr;
+typeattribute  montype, monattr;
 ```
 
-* **`type X;`** : crée un nouveau type X (domaine ou objet).
-* **`typeattribute T, A;`** : associe le type T à l’attribut A (pour factoriser les règles sur plusieurs types).
+### Règles 
 
----
 
-## 4. Domain setup macros
+Une règle est de la forme : 
 
-```te
-init_daemon_domain(monsvc_t, monsvc_exec_t)
+```bash
+regle source_type target_type : class perms;
 ```
 
-* **`init_daemon_domain(domain, exec_type)`** :
+Les types de règles possibles sont : 
 
-  * Déclare `domain` comme domaine de démon
-  * Crée la transition automatiquement depuis `init_t`/`systemd_t`
-  * Ajoute un ensemble complet de règles courantes (accès logs, sockets, etc.)
-* **Alternative plus stricte** :
+- `allow`: autorise l'action
 
-  * Éviter les macros « unconfined »
-  * Définir manuellement des `allow` ciblés
+- `dontaudit`: ne log pas l'action (en cas de refus attendu)
 
----
+- `auditallow` : log l'action même si autorisé (n'`allow` pas)
 
-## 5. Règles d’autorisation
+Exemples:
 
-```te
-allow monsvc_t var_log_t:file { read write open getattr };
-dontaudit monsvc_t etc_t:dir { search };
+```bash
+allow monapp_t var_log_t:file { read write open getattr };
+dontaudit monapp_t etc_t:dir { search };
 ```
 
-* **`allow <src> <tgt>:<class> { perms… };`** : autorise explicitement les permissions.
-* **`dontaudit`** : idem `allow` mais **n’écrit pas** de logs AVC (utile pour “nettoyer” les non-pertinents).
-* **`auditallow`** : force la journalisation même si la règle existe.
 
----
+À la place du type on peut mettre un attribut.
 
-## 6. Transitions de type
+### Constrain
 
-```te
-type_transition init_t monsvc_exec_t:process monsvc_t;
+On peut rajouter des restrictions avec le keyword `constrain`:
+
+```bash
+constrain class perms expression_logique
 ```
 
-* **`type_transition S T:class U;`** :
-  quand un objet de type S exécute T dans la classe class,
-  le nouveau processus héritera du type U.
+Exemple tiré de [refPolicy](https://github.com/SELinuxProject/refpolicy/blob/master/policy/constraints):
 
----
-
-## 7. File contexts (fcontext)
-
-```te
-# fichier contextuel (équivalent semanage fcontext)
-file_contexts=$(cat <<EOF
-/opt/monservice/bin/helloserver   gen_context(system_u, object_r, monsvc_exec_t, s0)
-/opt/monservice/logs(/.*)?         gen_context(system_u, object_r, var_log_t, s0)
-EOF
-)
+```bash
+constrain socket_class_set { create relabelto relabelfrom }
+(
+	u1 == u2
+	or t1 == can_change_object_identity
+);
 ```
 
-* En `.te` pur, on ne déclare pas de `file_context`;
-  on utilise `monolithic_context` ou **on gère via semanage**.
-* Les modules `.fc` séparés contiennent ces lignes.
+On peut faire des expressions logiques pour mieux cerner ces contraintes.
 
----
+Ici `u1` représente l'user source et `u2` l'user target.
+`t1` le type source.
 
-## 8. Interfaces & packaging
+On voit ici que la contrainte s'applique à un attribut représentant les classes de socket.
 
-```te
-interface(`monservice_if')      # déclare un point d’extension
-provides(`monservice_if')       # indique qu’on fournit cette interface
+### Classes d'objets et permissions
+
+On peut définir des nouvelles classes et permissions mais totalement hors scope.
+
+#### Classes de fichiers
+
+```bash
+filesystem, dir, file, lnk_file, fifo_file
 ```
 
-* **Pour partager des règles** entre modules ou respecter des dépendances.
+#### Classes d'objets réseau
 
----
+```bash
+socket, tcp_socket, udp_socket, rawip_socket, unix_stream_socket, netif
+```
 
-## 9. Compilation résumé
+#### Classe de process
+
+Simplement .... `process`
+
+
+
+### Permissions
+
+#### Permissions sur fichiers
+```bash
+append, create, execute, getattr, ioctl [syscall I/O], link, read, rename, write
+```
+
+#### Permissions sur les sockets
+```bash
+accept, append, bind, connect, create, ioctl, read, write
+```
+
+
+
+## Compilation
 
 ```bash
 checkmodule    -M -m -o monservice.mod monservice.te
 semodule_package -o monservice.pp -m monservice.mod
-sudo semodule  -i monservice.pp
+semodule  -i monservice.pp
 ```
-
----
-
-## 10. Où trouver les macros et détails
-
-* **Fichiers include** (Fedora/RHEL) :
-  `/usr/share/selinux/devel/include/*.spt`
-  `/usr/share/selinux/devel/include/support/obj_perm_sets.spt`
-  `/usr/share/selinux/devel/include/services/*.te`
-* **Refpolicy GitHub** :
-  [https://github.com/SELinuxProject/refpolicy](https://github.com/SELinuxProject/refpolicy) (dossier `policy/modules` et `include/`)
-* **Pages de manuel** :
-  `man selinux-policy-devel`
-  `man sepolicy`
-
----
-
-> Cette **cheat-sheet** couvre l’essentiel pour **rédiger des fichiers `.te`** clairs, précis et maintenables, sans te plonger dans le CIL bas-niveau.

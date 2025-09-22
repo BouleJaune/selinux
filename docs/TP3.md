@@ -20,7 +20,7 @@ Le ``chcon`` du script est temporaire, remettez le contexte original et regéné
     systemctl restart myscript
     ```
     
-#### Sugestions ``sealert`` et création de module
+#### Suggestions ``sealert`` et création de module
 
 Utilisez ``sealert`` et ses suggestions pour créer un module custom. 
 

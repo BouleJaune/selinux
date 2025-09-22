@@ -22,7 +22,7 @@
 
 ### Vérification de l’état SELinux
 
-Utilisez des commandes CLI pour voir l'état de SELinux et voir quelle elle la policy actuellement chargée.
+Utilisez des commandes CLI pour voir l'état de SELinux et voir quelle est la policy actuellement chargée.
 
 Vous pouvez aussi utiliser une commande renvoyant un code de retour 1 ou 0 pour voir l'état de SELinux, utile dans les scripts.
 

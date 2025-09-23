@@ -703,7 +703,8 @@ Une fois ceci fait, activez le module.</p>
 </span></code></pre></div></td></tr></table></div>
 <p>Si vous n'avez pas supprimer le dossier <code>nginx</code> ou modifier son contexte, sans le <code>:z</code>/<code>:Z</code> podman ne tentera pas de relabeliser et le dossier <code>nginx</code> gardera son contexte précédent.</p>
 <p>Le dossier nginx n'a pas son contexte modifié sans l'option <code>:Z</code>/<code>:z</code> mais fonctionne quand même, car la permission a été rajoutée via la policy d'udica.</p>
-<p>La policy donne les droits sur le type par initial du dossier mount.</p>
+<p>La policy donne les droits sur le type du dossier que l'on mount.</p>
+<p>Si on veut qu'elle fonctionne différemment il faut faire un type custom pour les fichiers (<code>.te</code>) et l'assigner au dossier mount puis regénérer la policy Udica.</p>
 
 
 

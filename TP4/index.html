@@ -915,7 +915,9 @@ Compilation et activation:
 </span></code></pre></div></td></tr></table></div>
 <p>Il faut faire un relabel de tout le système au boot pour activer SELinux. Changez le fichier de config SELinux pour passer en MLS et en Permissive.</p>
 <p>Puis créez un fichier pour trigger le relabel au bot :
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1"></a>touch<span class="w"> </span>/.autorelabel
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span>
+<span class="normal"><a href="#__codelineno-12-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1"></a>touch<span class="w"> </span>/.autorelabel<span class="w"> </span><span class="c1">#ou</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2"></a>fixfiles<span class="w"> </span>-F<span class="w"> </span>onboot
 </span></code></pre></div></td></tr></table></div></p>
 <p>Redémarrez et vérifier que vous êtes bien en MLS / Permissive après.</p>
 <h4 id="notes-sur-mls">Notes sur MLS</h4>

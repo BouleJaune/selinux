@@ -177,7 +177,8 @@ Il faut faire un relabel de tout le système au boot pour activer SELinux. Chang
 
 Puis créez un fichier pour trigger le relabel au bot :
 ```bash
-touch /.autorelabel
+touch /.autorelabel #ou
+fixfiles -F onboot
 ```
 
 Redémarrez et vérifier que vous êtes bien en MLS / Permissive après.

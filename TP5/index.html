@@ -617,9 +617,11 @@
 <summary>Commandes</summary>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
 <span class="normal"><a href="#__codelineno-0-2">2</a></span>
-<span class="normal"><a href="#__codelineno-0-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>useradd<span class="w"> </span>-m<span class="w"> </span>podtest
+<span class="normal"><a href="#__codelineno-0-3">3</a></span>
+<span class="normal"><a href="#__codelineno-0-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>useradd<span class="w"> </span>-m<span class="w"> </span>podtest
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>passwd<span class="w"> </span>podtest
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a>su<span class="w"> </span>-<span class="w"> </span>podtest
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a>loginctl<span class="w"> </span>enable-linger<span class="w"> </span>podtest<span class="w"> </span><span class="c1"># pour que ça marche avec su - plutôt que juste ssh</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a>su<span class="w"> </span>-<span class="w"> </span>podtest
 </span></code></pre></div></td></tr></table></div>
 </details>
 <p>Lancez un conteneur nginx nommé <code>tp-web</code> sur le port <code>8080</code> et observez son contexte.</p>

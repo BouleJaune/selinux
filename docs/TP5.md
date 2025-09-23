@@ -41,6 +41,8 @@ Lancez un conteneur nginx nommé `tp-web` sur le port `8080` et observez son con
 
     ```bash
     ps -efZ | grep nginx
+    # ou
+    podman inspect | grep -i label
     ```
 
 ---
@@ -56,7 +58,7 @@ Lancez un conteneur nginx nommé `tp-web` sur le port `8080` et observez son con
     ```bash
     mkdir nginx && echo "ok" > ./nginx/index.html
     podman stop tp-web && podman rm tp-web
-    podman run -d -name tp-web -p 8080:80 -v ./nginx:/usr/share/nginx/html nginx
+    podman run -d --name tp-web -p 8080:80 -v ./nginx:/usr/share/nginx/html nginx
     ```
 
 * Testez l'accès au serveur web

@@ -189,7 +189,7 @@ La politique MLS restreint certaines parties du système même en mode permissif
 
 Notamment, par défaut, `root` via une connexion ssh ne pourra pas avoir son type `sys_adm` et sera simplement en `staff_t`. Il faut pour cela décommenter la dernière ligne de `/etc/selinux/mls/contexts/users/root`. 
 
-Par défaut MLS n'autorise que les secure TTY à se connecter, ces TTY sont listés dans `/etc/selinux/mls/contexts/secure_tty_types`.
+Par défaut MLS n'autorise que les secure TTY à se connecter, ces TTY sont listés dans `/etc/selinux/mls/contexts/securetty_types`.
 
 Vous pourrez observer dans logs `ausearch` qu'il y a beaucoup d'alertes diverses, et que même `ausearch` lui même remonte des alertes de sécurité en MLS. D'où la pertinence de lancer le système en Permissive.
 

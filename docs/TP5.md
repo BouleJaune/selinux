@@ -126,4 +126,6 @@ Si vous n'avez pas supprimer le dossier `nginx` ou modifier son contexte, sans l
 
 Le dossier nginx n'a pas son contexte modifié sans l'option `:Z`/`:z` mais fonctionne quand même, car la permission a été rajoutée via la policy d'udica.
 
-La policy donne les droits sur le type par initial du dossier mount.
+La policy donne les droits sur le type du dossier que l'on mount.
+
+Si on veut qu'elle fonctionne différemment il faut faire un type custom pour les fichiers (`.te`) et l'assigner au dossier mount puis regénérer la policy Udica.

@@ -26,6 +26,7 @@ Créez un utilisateur dédié à podman et connectez vous dessus.
     ```bash
     useradd -m podtest
     passwd podtest
+    loginctl enable-linger podtest # pour que ça marche avec su - plutôt que juste ssh
     su - podtest
     ```
 

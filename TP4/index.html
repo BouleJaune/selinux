@@ -923,7 +923,7 @@ Compilation et activation:
 <h4 id="notes-sur-mls">Notes sur MLS</h4>
 <p>La politique MLS restreint certaines parties du système même en mode permissif.</p>
 <p>Notamment, par défaut, <code>root</code> via une connexion ssh ne pourra pas avoir son type <code>sys_adm</code> et sera simplement en <code>staff_t</code>. Il faut pour cela décommenter la dernière ligne de <code>/etc/selinux/mls/contexts/users/root</code>. </p>
-<p>Par défaut MLS n'autorise que les secure TTY à se connecter, ces TTY sont listés dans <code>/etc/selinux/mls/contexts/secure_tty_types</code>.</p>
+<p>Par défaut MLS n'autorise que les secure TTY à se connecter, ces TTY sont listés dans <code>/etc/selinux/mls/contexts/securetty_types</code>.</p>
 <p>Vous pourrez observer dans logs <code>ausearch</code> qu'il y a beaucoup d'alertes diverses, et que même <code>ausearch</code> lui même remonte des alertes de sécurité en MLS. D'où la pertinence de lancer le système en Permissive.</p>
 <h4 id="assignation-dune-plage-mls">Assignation d'une plage MLS</h4>
 <p>Changer de policy nous a enlevé nos configurations custom. Recréez l'user SELinux d'<code>alice</code> puis assignez lui une plage de niveaux MLS <code>s0-s3</code>.</p>
